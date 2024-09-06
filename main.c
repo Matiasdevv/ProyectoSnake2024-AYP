@@ -16,7 +16,7 @@ SDL_Rect food = {200, 200, 20, 20};  // Posición y tamaño de la comida
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
-int snakeMovement(SDL_Event event)
+int snakeKeyboardMovement(SDL_Event event)
 {
     int w = snake.w;
     int h = snake.h;
@@ -139,13 +139,12 @@ int main(int argc, char *argv[])
             }
             if (event.type == SDL_KEYDOWN)
             {
-                snakeMovement(event);
+                snakeKeyboardMovement(event);
             }
         }
 
         if (SDL_HasIntersection(&snake, &food))
         {
-            food.y = 10;
             snake.h = snake.h + 20;
         }
 
@@ -154,6 +153,30 @@ int main(int argc, char *argv[])
         snake.y += snake_velY;
 
         drawScreen(renderer);
+    }
+
+    // Movimiento de la serpiente
+    snake.x += snake_velX;
+    snake.y += snake_velY;
+    // Evitar que la serpiente salga de la pantalla
+    int limit = 20; // Definir un límite de 20 píxeles
+
+    if (snake.x < limit)
+    {
+        snake.x = limit; // Detener en el borde izquierdo
+    }
+    else if (snake.x + snake.w > SCREEN_WIDTH - limit)
+    {
+        snake.x = SCREEN_WIDTH - snake.w - limit; // Detener en el borde derecho
+    }
+
+    if (snake.y < limit)
+    {
+        snake.y = limit; // Detener en el borde superior
+    }
+    else if (snake.y + snake.h > SCREEN_HEIGHT - limit)
+    {
+        snake.y = SCREEN_HEIGHT - snake.h - limit; // Detener en el borde inferior
     }
 
     cleanUp(renderer, window);
