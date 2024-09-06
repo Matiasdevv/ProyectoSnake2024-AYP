@@ -86,12 +86,25 @@ int main(int argc, char* argv[]) {
 
              //todo: evaluar hacia que lugar está mirando y modificar
              
-                snake.h = snake.h+20;
-    do {
-        food.x = (rand() % (SCREEN_WIDTH / snake.w)) * snake.w;
-        food.y = (rand() % (SCREEN_HEIGHT / snake.h)) * snake.h;
-    } while ((food.x == snake.x && food.y == snake.y) || (food.x == 0 && food.x == 800 && food.y == 0 && food.y == 600));  // Asegurarse de que la comida no aparece en la posición de la serpiente ni en 800x600
-        }
+                
+                int ramdom_number = (rand()% 39)*20;  //genera un numero aleatorio dentro de la cuadricula
+                int ramdom_number2 = (rand()% 29)*20; 
+
+                if (ramdom_number == 0) {  //verificar que el numero no sea 0
+                 while (ramdom_number == 0 ) { 
+                   ramdom_number= (rand()% 39)*20; // dar numeros aleatorios hasta que sea distinto a 0
+                   }
+                }
+                
+                if (ramdom_number2 == 0 ) { //verificar que el numero no sea 0
+                    while(ramdom_number2 == 0) {
+                   ramdom_number2= (rand()% 29)*20;  // dar numeros aleatorios hasta que sea distinto a 0
+                   }
+                }
+    
+        food.x = ramdom_number; //establecer el numero como posicion en x de la comida
+        food.y = ramdom_number2; // establecer el numero como posicion en y de la comida
+                }
 
         // Limpia la pantalla
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Negro
@@ -113,8 +126,8 @@ int main(int argc, char* argv[]) {
         SDL_Delay(100);
     }
 
-    // Limpieza
-    SDL_DestroyRenderer(renderer);
+    // Limpieza, limpa la memoria 
+    SDL_DestroyRenderer(renderer); 
     SDL_DestroyWindow(window);
     SDL_Quit();
 
