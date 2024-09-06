@@ -52,10 +52,10 @@ int main(int argc, char* argv[]) {
             }
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_UP:    velX = 0;  velY = -20; break;
-                    case SDLK_DOWN:  velX = 0;  velY = 20;  break;
-                    case SDLK_LEFT:  velX = -20; velY = 0;  break;
-                    case SDLK_RIGHT: velX = 20;  velY = 0;  break;
+                    case SDLK_LEFT:  velX = -20; velY = 0;   break;
+                    case SDLK_RIGHT: velX = 20;  velY = 0;    break;
+                    case SDLK_UP:    velX = 0;  velY = -20;  break;
+                    case SDLK_DOWN:  velX = 0;  velY = 20;   break;
                     case SDLK_ESCAPE: running = 0; 
                 }
             }
@@ -64,6 +64,34 @@ int main(int argc, char* argv[]) {
         // Movimiento de la serpiente
         snake.x += velX;
         snake.y += velY;
+        // Evitar que la serpiente salga de la pantalla
+        int limit = 20;  // Definir un límite de 20 píxeles
+
+        if (snake.x < limit) {
+         snake.x = limit;  // Detener en el borde izquierdo
+        } else if (snake.x + snake.w > SCREEN_WIDTH - limit) {
+           snake.x = SCREEN_WIDTH - snake.w - limit;  // Detener en el borde derecho
+        }
+
+        if (snake.y < limit) {
+         snake.y = limit;  // Detener en el borde superior
+        } else if (snake.y + snake.h > SCREEN_HEIGHT - limit) {
+           snake.y = SCREEN_HEIGHT - snake.h - limit;  // Detener en el borde inferior
+}
+
+
+        // Detección de colisión entre la serpiente y la comida
+        if (SDL_HasIntersection(&snake, &food)) {
+             // Si la serpiente come la comida, reposiciona la comida en un lugar aleatorio
+
+             //todo: evaluar hacia que lugar está mirando y modificar
+             
+                snake.h = snake.h+20;
+    do {
+        food.x = (rand() % (SCREEN_WIDTH / snake.w)) * snake.w;
+        food.y = (rand() % (SCREEN_HEIGHT / snake.h)) * snake.h;
+    } while ((food.x == snake.x && food.y == snake.y) || (food.x == 0 && food.x == 800 && food.y == 0 && food.y == 600));  // Asegurarse de que la comida no aparece en la posición de la serpiente ni en 800x600
+        }
 
         // Limpia la pantalla
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Negro
@@ -74,6 +102,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderFillRect(renderer, &food);
 
         // Dibuja la serpiente
+ 
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Verde
         SDL_RenderFillRect(renderer, &snake);
 
@@ -81,7 +110,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(renderer);
 
         // Control de la velocidad del juego
-        SDL_Delay(150);
+        SDL_Delay(100);
     }
 
     // Limpieza
