@@ -61,15 +61,40 @@ int main(int argc, char* argv[]) {
             }
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_LEFT:  velX = -SEGMENT_SIZE; velY = 0;   break;
-                    case SDLK_RIGHT: velX = SEGMENT_SIZE;  velY = 0;    break;
-                    case SDLK_UP:    velX = 0;  velY = -SEGMENT_SIZE;  break;
-                    case SDLK_DOWN:  velX = 0;  velY = SEGMENT_SIZE;   break;
-                    case SDLK_ESCAPE: running = 0;
+                    case SDLK_LEFT:
+                        // No permitir moverse a la izquierda si ya se está moviendo a la derecha
+                        if (velX != SEGMENT_SIZE) {
+                            velX = -SEGMENT_SIZE;
+                            velY = 0;
+                        }
+                        break;
+                    case SDLK_RIGHT:
+                        // No permitir moverse a la derecha si ya se está moviendo a la izquierda
+                        if (velX != -SEGMENT_SIZE) {
+                            velX = SEGMENT_SIZE;
+                            velY = 0;
+                        }
+                        break;
+                    case SDLK_UP:
+                        // No permitir moverse hacia arriba si ya se está moviendo hacia abajo
+                        if (velY != SEGMENT_SIZE) {
+                            velX = 0;
+                            velY = -SEGMENT_SIZE;
+                        }
+                        break;
+                    case SDLK_DOWN:
+                        // No permitir moverse hacia abajo si ya se está moviendo hacia arriba
+                        if (velY != -SEGMENT_SIZE) {
+                            velX = 0;
+                            velY = SEGMENT_SIZE;
+                        }
+                        break;
+                    case SDLK_ESCAPE:
+                        running = 0;
+                        break;
                 }
             }
         }
-
         // Movimiento de la serpiente
         // Mover cada segmento al lugar del segmento anterior
         for (int i = snakeLength - 1; i > 0; i--) {
@@ -93,6 +118,16 @@ int main(int argc, char* argv[]) {
             snake[0].y = limit;  // Detener en el borde superior
         } else if (snake[0].y + snake[0].h > SCREEN_HEIGHT - limit) {
             snake[0].y = SCREEN_HEIGHT - snake[0].h - limit;  // Detener en el borde inferior
+        }
+        //muerte
+        for (int i = 1; i < snakeLength; i++)
+        {
+            if (SDL_HasIntersection(&snake[0], &snake[i + 1]))
+            {
+                SDL_DestroyWindow(window);
+
+                SDL_Quit();
+            }
         }
 
         // Detección de colisión entre la serpiente y la comida
