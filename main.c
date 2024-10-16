@@ -1,206 +1,191 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-const int SEGMENT_SIZE = 20;
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define SEGMENT_SIZE 20
+#define BORDER_WIDTH 20
+#define MAX_SNAKE_LENGTH 100
 
-SDL_Rect food = {200, 200, SEGMENT_SIZE, SEGMENT_SIZE}; // Posición y tamaño de la comida
+typedef struct {
+    int x, y, w, h;
+} Segment;
 
-int velX = SEGMENT_SIZE, velY = 0; // Velocidad de la serpiente
-
-SDL_Rect snake[100]; // Declare the array with a fixed size
-int snakeLength = 2; // Initially, the snake has 2 segments
-
-// Initialize the snake array
-void initializeSnake()
-{
-    snake[0].x = 100;
-    snake[0].y = 100;
-    snake[0].w = SEGMENT_SIZE;
-    snake[0].h = SEGMENT_SIZE;
-}
-
-// Bucle del juego
+SDL_Texture *snakeTexture;
+SDL_Texture *foodTexture;
+Segment snake[MAX_SNAKE_LENGTH];
+int snakeLength = 2;
 int running = 1;
+int velX = SEGMENT_SIZE; // Velocidad en X
+int velY = 0; // Velocidad en Y
 SDL_Event event;
 
-void snakeMovement(SDL_Event event)
-{
-    switch (event.key.keysym.sym)
-    {
-    case SDLK_LEFT:
-        // No permitir moverse a la izquierda si ya se está moviendo a la derecha
-        if (velX != SEGMENT_SIZE)
-        {
-            velX = -SEGMENT_SIZE;
-            velY = 0;
-        }
-        break;
-    case SDLK_RIGHT:
-        // No permitir moverse a la derecha si ya se está moviendo a la izquierda
-        if (velX != -SEGMENT_SIZE)
-        {
-            velX = SEGMENT_SIZE;
-            velY = 0;
-        }
-        break;
-    case SDLK_UP:
-        // No permitir moverse hacia arriba si ya se está moviendo hacia abajo
-        if (velY != SEGMENT_SIZE)
-        {
+void initializeSnake() {
+    snake[0].x = SCREEN_WIDTH / 2; // Inicializa en el centro de la pantalla
+    snake[0].y = SCREEN_HEIGHT / 2;
+    snake[0].w = SEGMENT_SIZE;
+    snake[0].h = SEGMENT_SIZE;
+
+    // Inicializa el segundo segmento justo detrás
+    snake[1].x = snake[0].x - SEGMENT_SIZE; 
+    snake[1].y = snake[0].y; 
+    snake[1].w = SEGMENT_SIZE;
+    snake[1].h = SEGMENT_SIZE;
+}
+
+void drawSnake(SDL_Renderer *renderer) {
+    for (int i = 0; i < snakeLength; i++) {
+        SDL_Rect rect = {snake[i].x, snake[i].y, snake[i].w, snake[i].h};
+        SDL_RenderCopy(renderer, snakeTexture, NULL, &rect);
+    }
+}
+
+// Nueva función para dibujar los bordes del mapa
+void drawMapBorders(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Color verde
+
+    // Borde superior
+    SDL_Rect topBorder = {0, 0, SCREEN_WIDTH, BORDER_WIDTH};
+    SDL_RenderFillRect(renderer, &topBorder);
+
+    // Borde inferior
+    SDL_Rect bottomBorder = {0, SCREEN_HEIGHT - BORDER_WIDTH, SCREEN_WIDTH, BORDER_WIDTH};
+    SDL_RenderFillRect(renderer, &bottomBorder);
+
+    // Borde izquierdo
+    SDL_Rect leftBorder = {0, 0, BORDER_WIDTH, SCREEN_HEIGHT};
+    SDL_RenderFillRect(renderer, &leftBorder);
+
+    // Borde derecho
+    SDL_Rect rightBorder = {SCREEN_WIDTH - BORDER_WIDTH, 0, BORDER_WIDTH, SCREEN_HEIGHT};
+    SDL_RenderFillRect(renderer, &rightBorder);
+}
+
+void snakeMovement(SDL_Event event) {
+    switch (event.key.keysym.sym) {
+        case SDLK_UP:
             velX = 0;
             velY = -SEGMENT_SIZE;
-        }
-        break;
-    case SDLK_DOWN:
-        // No permitir moverse hacia abajo si ya se está moviendo hacia arriba
-        if (velY != -SEGMENT_SIZE)
-        {
+            break;
+        case SDLK_DOWN:
             velX = 0;
             velY = SEGMENT_SIZE;
-        }
-        break;
-    case SDLK_ESCAPE:
-        running = 0;
-        break;
+            break;
+        case SDLK_LEFT:
+            velX = -SEGMENT_SIZE;
+            velY = 0;
+            break;
+        case SDLK_RIGHT:
+            velX = SEGMENT_SIZE;
+            velY = 0;
+            break;
     }
 }
 
-void setSnakeLimits()
-{
-
-    // Evitar que la serpiente salga de la pantalla
-    int limit = SEGMENT_SIZE;
-
-    if (snake[0].x < limit)
-    {
-        snake[0].x = limit; // Detener en el borde izquierdo
+void setSnakeLimits() {
+    if (snake[0].x < BORDER_WIDTH) {
+        snake[0].x = BORDER_WIDTH;
+    } else if (snake[0].x >= SCREEN_WIDTH - BORDER_WIDTH) {
+        snake[0].x = SCREEN_WIDTH - BORDER_WIDTH - SEGMENT_SIZE;
     }
-    else if (snake[0].x + snake[0].w > SCREEN_WIDTH - limit)
-    {
-        snake[0].x = SCREEN_WIDTH - snake[0].w - limit; // Detener en el borde derecho
-    }
-
-    if (snake[0].y < limit)
-    {
-        snake[0].y = limit; // Detener en el borde superior
-    }
-    else if (snake[0].y + snake[0].h > SCREEN_HEIGHT - limit)
-    {
-        snake[0].y = SCREEN_HEIGHT - snake[0].h - limit; // Detener en el borde inferior
+    if (snake[0].y < BORDER_WIDTH) {
+        snake[0].y = BORDER_WIDTH;
+    } else if (snake[0].y >= SCREEN_HEIGHT - BORDER_WIDTH) {
+        snake[0].y = SCREEN_HEIGHT - BORDER_WIDTH - SEGMENT_SIZE;
     }
 }
 
-void snakeFoodCollition()
-{
-    // Detección de colisión entre la serpiente y la comida
-    if (SDL_HasIntersection(&snake[0], &food))
-    {
-        int ramdom_number = (rand() % 39) * 20; // genera un numero aleatorio dentro de la cuadricula
-        int ramdom_number2 = (rand() % 29) * 20;
-
-        if (ramdom_number == 0)
-        { // verificar que el numero no sea 0
-            while (ramdom_number == 0)
-            {
-                ramdom_number = (rand() % 39) * 20; // dar numeros aleatorios hasta que sea distinto a 0
-            }
-        }
-
-        if (ramdom_number2 == 0)
-        { // verificar que el numero no sea 0
-            while (ramdom_number2 == 0)
-            {
-                ramdom_number2 = (rand() % 29) * 20; // dar numeros aleatorios hasta que sea distinto a 0
-            }
-        }
-
-        food.x = ramdom_number;  // establecer el numero como posicion en x de la comida
-        food.y = ramdom_number2; // establecer el numero como posicion en y de la comida
-        snakeLength++;           // Aumentar el tamaño de la serpiente
-    }
+void drawFood(SDL_Renderer *renderer) {
+    // Implementación de la comida (agrega tu lógica aquí)
 }
 
-void snakeBodyCollition()
-{
-    // verifica si colisiona o no el cuerpo con la cabeza
-    for (int i = 1; i < snakeLength; i++)
-    {
-        if (SDL_HasIntersection(&snake[0], &snake[i + 1]))
-        {
-            running = 0;
-        }
-    }
+void drawScore(SDL_Renderer *renderer) {
+    // Implementación del dibujo de la puntuación (agrega tu lógica aquí)
 }
 
-void drawSnake(SDL_Renderer *renderer)
-{
-    // Dibuja la serpiente
-    for (int i = 0; i < snakeLength; i++)
-    {
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Verde
-        SDL_RenderFillRect(renderer, &snake[i]);
+int fileExists(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        fclose(file);
+        return 1;
     }
+    return 0;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     srand(time(NULL));
-    // Inicializa generador de números aleatorios
     initializeSnake();
 
-    // Inicializa SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Error al inicializar SDL: %s\n", SDL_GetError());
         return 1;
     }
 
-    // Crea la ventana
+    if (TTF_Init() < 0) {
+        printf("Error al inicializar TTF: %s\n", TTF_GetError());
+        return 1;
+    }
+
     SDL_Window *window = SDL_CreateWindow("Snake Game",
                                           SDL_WINDOWPOS_CENTERED,
                                           SDL_WINDOWPOS_CENTERED,
                                           SCREEN_WIDTH, SCREEN_HEIGHT,
                                           SDL_WINDOW_SHOWN);
-
-    if (!window)
-    {
+    if (!window) {
         printf("Error al crear la ventana: %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
 
-    // Crea el renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    if (!renderer)
-    {
+    if (!renderer) {
         printf("Error al crear el renderer: %s\n", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
     }
 
-    while (running)
-    {
-        // Manejo de eventos
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
+    if (!fileExists("snake_sprite.bmp")) {
+        printf("El archivo snake_sprite.bmp no existe.\n");
+        return 1;
+    }
+
+    if (!fileExists("food_sprite.bmp")) {
+        printf("El archivo food_sprite.bmp no existe.\n");
+        return 1;
+    }
+
+    SDL_Surface *snakeSurface = SDL_LoadBMP("snake_sprite.bmp");
+    if (!snakeSurface) {
+        printf("Error al cargar la textura de la serpiente: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    SDL_Surface *foodSurface = SDL_LoadBMP("food_sprite.bmp");
+    if (!foodSurface) {
+        printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    snakeTexture = SDL_CreateTextureFromSurface(renderer, snakeSurface);
+    foodTexture = SDL_CreateTextureFromSurface(renderer, foodSurface);
+    SDL_FreeSurface(snakeSurface);
+    SDL_FreeSurface(foodSurface);
+
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
                 running = 0;
             }
-            if (event.type == SDL_KEYDOWN)
-            {
+            if (event.type == SDL_KEYDOWN) {
                 snakeMovement(event);
             }
         }
-        // Mover cada segmento al lugar del segmento anterior
-        for (int i = snakeLength - 1; i > 0; i--)
-        {
+
+        for (int i = snakeLength - 1; i > 0; i--) {
             snake[i] = snake[i - 1];
         }
 
@@ -209,30 +194,22 @@ int main(int argc, char *argv[])
 
         setSnakeLimits();
 
-        snakeBodyCollition();
-
-        snakeFoodCollition();
-
-        // Limpia la pantalla
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Negro
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // Dibuja la comida
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Rojo
-        SDL_RenderFillRect(renderer, &food);
-
+        drawMapBorders(renderer);
         drawSnake(renderer);
+        drawFood(renderer);
+        drawScore(renderer);
 
-        // Actualiza la pantalla
         SDL_RenderPresent(renderer);
-
-        // Control de la velocidad del juego
-        SDL_Delay(200);
     }
 
-    // Limpieza
+    SDL_DestroyTexture(snakeTexture);
+    SDL_DestroyTexture(foodTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
     SDL_Quit();
 
     return 0;
