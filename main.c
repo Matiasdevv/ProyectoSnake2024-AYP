@@ -277,21 +277,42 @@ int main(int argc, char *argv[]) {
     initializeSnake();// Inicializar serpiente
     initializeFood(); // Inicializar la comida
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("Error al inicializar SDL: %s\n", SDL_GetError());
+   // Inicializar SDL y TTF
+    if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0) {
+        printf("Error al inicializar SDL o TTF: %s\n", SDL_GetError());
         return 1;
     }
-
-    if (TTF_Init() < 0) {
-        printf("Error al inicializar TTF: %s\n", TTF_GetError());
-        return 1;
-    }
+    
     font = TTF_OpenFont("ComicSansMS3.ttf", 24);
 if (font == NULL) {
     printf("Error al cargar la fuente: %s\n", TTF_GetError());
     return 1;
 }
 
+
+
+    SDL_Window *window = SDL_CreateWindow("Snake Game",
+                                          SDL_WINDOWPOS_CENTERED,
+                                          SDL_WINDOWPOS_CENTERED,
+                                          SCREEN_WIDTH, SCREEN_HEIGHT,
+                                          SDL_WINDOW_SHOWN);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    // Cargar la fuente ComicSansMS3.ttf para el menú y el score
+    TTF_Font *font = TTF_OpenFont("ComicSansMS3.ttf", 24); // Tamaño 24 para el menú y el score
+    if (!font) {
+        printf("Error al cargar la fuente ComicSansMS3.ttf: %s\n", TTF_GetError());
+        return 1;
+    }
+
+    if (!renderer) {
+        printf("Error al crear el renderer: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    
 while (onMenu) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -314,26 +335,6 @@ while (onMenu) {
     // Aquí empieza el juego después de que se sale del menú
     initializeSnake();
     initializeFood();
-
-
-    SDL_Window *window = SDL_CreateWindow("Snake Game",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SCREEN_WIDTH, SCREEN_HEIGHT,
-                                          SDL_WINDOW_SHOWN);
-    if (!window) {
-        printf("Error al crear la ventana: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer) {
-        printf("Error al crear el renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
 
     if (!fileExists("snake_sprite.bmp")) {
         printf("El archivo snake_sprite.bmp no existe.\n");
