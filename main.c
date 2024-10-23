@@ -20,6 +20,7 @@ typedef struct {
     int x, y, w, h;
 } Segment;
 
+SDL_Texture *snakeBodyTexture;
 SDL_Texture *snakeTexture;
 SDL_Texture *foodTexture;
 Segment snake[MAX_SNAKE_LENGTH];
@@ -116,10 +117,15 @@ void initializeFood() {
 void drawSnake(SDL_Renderer *renderer) {
     for (int i = 0; i < snakeLength; i++) {
         SDL_Rect rect = {snake[i].x, snake[i].y, snake[i].w, snake[i].h};
-        SDL_RenderCopy(renderer, snakeTexture, NULL, &rect);
+        if (i == 0) {
+            // Usar la textura de la cabeza para el primer segmento
+            SDL_RenderCopy(renderer, snakeTexture, NULL, &rect);
+        } else {
+            // Usar la textura del cuerpo para los demás segmentos
+            SDL_RenderCopy(renderer, snakeBodyTexture, NULL, &rect);
+        }
     }
 }
-
 // Nueva función para dibujar los bordes del mapa
 void drawMapBorders(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Color verde
@@ -357,7 +363,13 @@ while (onMenu) {
         printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
         return 1;
     }
-
+    SDL_Surface *snakeBodySurface = SDL_LoadBMP("snake_body.bmp"); // Archivo de textura del cuerpo
+    if (!snakeBodySurface) {
+        printf("Error al cargar snake_body.bmp: %s\n", SDL_GetError());
+        return 1;
+    }
+    snakeBodyTexture = SDL_CreateTextureFromSurface(renderer, snakeBodySurface);
+    SDL_FreeSurface(snakeBodySurface);
     snakeTexture = SDL_CreateTextureFromSurface(renderer, snakeSurface);
     foodTexture = SDL_CreateTextureFromSurface(renderer, foodSurface);
     SDL_FreeSurface(snakeSurface);
