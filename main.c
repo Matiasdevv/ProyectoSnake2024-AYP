@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define SEGMENT_SIZE 20
-#define BORDER_WIDTH 20
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+#define SEGMENT_SIZE 40
+#define BORDER_WIDTH 40
 #define MAX_SNAKE_LENGTH 100
 int menuOption = 0; // Para rastrear la opción seleccionada
 int onMenu = 1;     // Indica si estamos en el menú
@@ -20,8 +20,9 @@ typedef struct {
     int x, y, w, h;
 } Segment;
 
-SDL_Texture *snakeBodyTexture;
-SDL_Texture *snakeTexture;
+SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight;
+SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
+
 SDL_Texture *foodTexture;
 Segment snake[MAX_SNAKE_LENGTH];
 Segment food;
@@ -108,25 +109,54 @@ void initializeSnake() {
 }
 
 void initializeFood() {
-    food.x = (rand() % 39) * SEGMENT_SIZE;
-    food.y = (rand() % 29) * SEGMENT_SIZE;
+    food.x = (rand() % 31) * SEGMENT_SIZE;
+    food.y = (rand() % 17) * SEGMENT_SIZE;
     food.w = SEGMENT_SIZE;
     food.h = SEGMENT_SIZE;
+
+         if (food.x == 0) {
+            while (food.x== 0) {
+                food.x = (rand() % 31) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
+            }
+        }
+
+        // Verificar que el número no sea 0 para random_number2
+        if (food.y == 0) {
+            while (food.y == 0) {
+                food.y = (rand() % 17) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
+            }
+        }
+        printf ("cordenada x %d \n",food.x);
+        printf ("cordenada y %d \n",food.y);
 }
 
 void drawSnake(SDL_Renderer *renderer) {
     for (int i = 0; i < snakeLength; i++) {
         SDL_Rect rect = {snake[i].x, snake[i].y, snake[i].w, snake[i].h};
-        if (i == 0) {
-            // Usar la textura de la cabeza para el primer segmento
-            SDL_RenderCopy(renderer, snakeTexture, NULL, &rect);
-        } else {
-            // Usar la textura del cuerpo para los demás segmentos
-            SDL_RenderCopy(renderer, snakeBodyTexture, NULL, &rect);
+        
+        if (i == 0) {  // Cabeza
+            // Determinar la textura de la cabeza según la dirección de movimiento
+            if (velY < 0) {  // Moviéndose hacia arriba
+                SDL_RenderCopy(renderer, snakeTextureUp, NULL, &rect);
+            } else if (velY > 0) {  // Moviéndose hacia abajo
+                SDL_RenderCopy(renderer, snakeTextureDown, NULL, &rect);
+            } else if (velX < 0) {  // Moviéndose hacia la izquierda
+                SDL_RenderCopy(renderer, snakeTextureLeft, NULL, &rect);
+            } else if (velX > 0) {  // Moviéndose hacia la derecha
+                SDL_RenderCopy(renderer, snakeTextureRight, NULL, &rect);
+            }
+        } else {  // Cuerpo
+            // Determinar la textura del cuerpo según la dirección del segmento actual
+            if (snake[i].x == snake[i - 1].x) {  // Movimiento vertical
+                SDL_RenderCopy(renderer, snakeBodyTextureVertical, NULL, &rect);
+            } else {  // Movimiento horizontal
+                SDL_RenderCopy(renderer, snakeBodyTextureHorizontal, NULL, &rect);
+            }
         }
     }
 }
-// Nueva función para dibujar los bordes del mapa
+
+
 void drawMapBorders(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Color verde
 
@@ -201,19 +231,19 @@ void snakeFoodCollition() {
     SDL_Rect foodRect = {food.x, food.y, food.w, food.h};
     
     if (SDL_HasIntersection(&snakeHead, &foodRect)) {
-        int random_number = (rand() % 39) * SEGMENT_SIZE; // generar número aleatorio dentro de la cuadrícula
-        int random_number2 = (rand() % 29) * SEGMENT_SIZE;
+        int random_number = (rand() % 31) * SEGMENT_SIZE; // generar número aleatorio dentro de la cuadrícula
+        int random_number2 = (rand() % 17) * SEGMENT_SIZE;
 
          if (random_number == 0) {
             while (random_number == 0) {
-                random_number = (rand() % 39) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
+                random_number = (rand() % 31) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
             }
         }
 
         // Verificar que el número no sea 0 para random_number2
         if (random_number2 == 0) {
             while (random_number2 == 0) {
-                random_number2 = (rand() % 29) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
+                random_number2 = (rand() % 17) * SEGMENT_SIZE; // seguir generando números hasta que sea distinto de 0
             }
         }
 
@@ -222,6 +252,8 @@ void snakeFoodCollition() {
         food.y = random_number2;  // actualizar la posición y de la comida
         snakeLength++;      // aumentar el tamaño de la serpiente
         score++; // Aumenta el puntaje cuando come comida
+        printf ("cordenada x %d \n",food.x);
+        printf ("cordenada y %d \n",food.y);
     }
 }
 
@@ -238,36 +270,35 @@ void snakeBodyCollition() {
     }
 }
 
+//Dibujar el puntaje
 void drawScore(SDL_Renderer *renderer) {
+    // Preparar el texto del puntaje
     char scoreText[20];
-    sprintf(scoreText, "Score: %d", score);  // Convierte el puntaje a una cadena
+    sprintf(scoreText, "Score: %d", score);  // Convierte el puntaje a cadena de texto
 
+    // Renderizar el texto del puntaje a una superficie
     SDL_Surface *textSurface = TTF_RenderText_Solid(font, scoreText, textColor);
-    if (textSurface == NULL) {
+    if (!textSurface) {
         printf("Error al crear la superficie del texto: %s\n", TTF_GetError());
         return;
     }
 
+    // Crear textura a partir de la superficie del texto
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    if (textTexture == NULL) {
+    if (!textTexture) {
         printf("Error al crear la textura del texto: %s\n", SDL_GetError());
         SDL_FreeSurface(textSurface);
         return;
     }
 
-    SDL_Rect textRect;
-    textRect.x = BORDER_WIDTH;  // Posición X, un poco desplazado desde el borde izquierdo
-    textRect.y = BORDER_WIDTH - textSurface->h + 6;  // Posición Y, justo arriba del borde verde
-    textRect.w = textSurface->w;
-    textRect.h = textSurface->h;
-
+    // Posicionar el puntaje en pantalla
+    SDL_Rect textRect = {BORDER_WIDTH, BORDER_WIDTH - textSurface->h + 6, textSurface->w, textSurface->h};
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect);  // Renderiza el texto
 
+    // Limpiar memoria de superficie y textura
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
 }
-
-
 
 int fileExists(const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -284,18 +315,19 @@ int main(int argc, char *argv[]) {
     initializeFood(); // Inicializar la comida
 
    // Inicializar SDL y TTF
-    if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0) {
+   if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0) {
         printf("Error al inicializar SDL o TTF: %s\n", SDL_GetError());
         return 1;
     }
     
-    font = TTF_OpenFont("ComicSansMS3.ttf", 24);
-if (font == NULL) {
-    printf("Error al cargar la fuente: %s\n", TTF_GetError());
-    return 1;
-}
-
-
+    // Asegurarse de cargar la fuente una vez y verificar que no sea NULL
+    font = TTF_OpenFont("resources/fonts/ComicSansMS3.ttf", 24);
+    if (!font) {
+        printf("Error al cargar la fuente: %s\n", TTF_GetError());
+        SDL_Quit();
+        return 1;
+    }
+    
 
     SDL_Window *window = SDL_CreateWindow("Snake Game",
                                           SDL_WINDOWPOS_CENTERED,
@@ -304,12 +336,7 @@ if (font == NULL) {
                                           SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // Cargar la fuente ComicSansMS3.ttf para el menú y el score
-    TTF_Font *font = TTF_OpenFont("ComicSansMS3.ttf", 24); // Tamaño 24 para el menú y el score
-    if (!font) {
-        printf("Error al cargar la fuente ComicSansMS3.ttf: %s\n", TTF_GetError());
-        return 1;
-    }
+    
 
     if (!renderer) {
         printf("Error al crear el renderer: %s\n", SDL_GetError());
@@ -341,39 +368,26 @@ while (onMenu) {
     // Aquí empieza el juego después de que se sale del menú
     initializeSnake();
     initializeFood();
+snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_up.bmp"));
+snakeTextureDown = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_down.bmp"));
+snakeTextureLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_left.bmp"));
+snakeTextureRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_right.bmp"));
 
-    if (!fileExists("snake_sprite.bmp")) {
-        printf("El archivo snake_sprite.bmp no existe.\n");
-        return 1;
-    }
+snakeBodyTextureHorizontal = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_body_horizontal.bmp"));
+snakeBodyTextureVertical = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_body_vertical.bmp"));
 
-    if (!fileExists("food_sprite.bmp")) {
-        printf("El archivo food_sprite.bmp no existe.\n");
-        return 1;
-    }
+if (!snakeTextureUp || !snakeTextureDown || !snakeTextureLeft || !snakeTextureRight ||
+    !snakeBodyTextureHorizontal || !snakeBodyTextureVertical) {
+    printf("Error al cargar texturas: %s\n", SDL_GetError());
+    return 1;
+}
 
-    SDL_Surface *snakeSurface = SDL_LoadBMP("snake_sprite.bmp");
-    if (!snakeSurface) {
-        printf("Error al cargar la textura de la serpiente: %s\n", SDL_GetError());
-        return 1;
-    }
+foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/food_sprite.bmp"));
+if (!foodTexture) {
+    printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
+    running = 0;
+}
 
-    SDL_Surface *foodSurface = SDL_LoadBMP("food_sprite.bmp");
-    if (!foodSurface) {
-        printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
-        return 1;
-    }
-    SDL_Surface *snakeBodySurface = SDL_LoadBMP("snake_body.bmp"); // Archivo de textura del cuerpo
-    if (!snakeBodySurface) {
-        printf("Error al cargar snake_body.bmp: %s\n", SDL_GetError());
-        return 1;
-    }
-    snakeBodyTexture = SDL_CreateTextureFromSurface(renderer, snakeBodySurface);
-    SDL_FreeSurface(snakeBodySurface);
-    snakeTexture = SDL_CreateTextureFromSurface(renderer, snakeSurface);
-    foodTexture = SDL_CreateTextureFromSurface(renderer, foodSurface);
-    SDL_FreeSurface(snakeSurface);
-    SDL_FreeSurface(foodSurface);
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -403,14 +417,18 @@ while (onMenu) {
         drawMapBorders(renderer);// Dibujar los bordes
         drawSnake(renderer);// Dibujar la serpiente
         drawFood(renderer);  // Dibujar la comida
-        drawScore(renderer);//Dibujar el puntaje
+        drawScore(renderer);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(200);
     }
     TTF_CloseFont(font);
-    SDL_DestroyTexture(snakeTexture);
-    SDL_DestroyTexture(foodTexture);
+    SDL_DestroyTexture(snakeTextureUp);
+    SDL_DestroyTexture(snakeTextureDown);
+    SDL_DestroyTexture(snakeTextureLeft);
+    SDL_DestroyTexture(snakeTextureRight);
+    SDL_DestroyTexture(snakeBodyTextureHorizontal);
+    SDL_DestroyTexture(snakeBodyTextureVertical);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();
