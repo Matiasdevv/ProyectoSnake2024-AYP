@@ -1,23 +1,24 @@
-#include "score.h"
-#include "menu.h"
-#include "snake.h"
-#include "structs.h"
+#include <SDL2/SDL_ttf.h>
+#include "../settings/structs.h"
+#include "../ui/score.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "sdl.h"
-#include "global.h"
-#include <SDL2/SDL_ttf.h>
+#include "../ui/sdl.h"
 
-void drawMenu(SDL_Renderer *renderer, TTF_Font *font)
+void drawMenu(SDL_Renderer *renderer)
 {
+    const SCREEN_WIDTH = GetScreenHeight();
+    const SCREEN_HEIGHT = GetScreenHeight();
+    const BORDER_WIDTH = GetBorderHeight();
+    const SEGMENT_SIZE = GetSegmentSize();
     // Colores
     SDL_Color white = {255, 255, 255};
     SDL_Color red = {255, 0, 0};
-
+    const TTF_Font *font = GetFont();
     // Opción de menú "Jugar"
-    SDL_Surface *playSurface = TTF_RenderText_Solid(font, "Jugar", menuOption == 0 ? red : white);
+    SDL_Surface *playSurface = TTF_RenderText_Solid(font, "Jugar", GetMenuOption() == 0 ? red : white);
     SDL_Texture *playTexture = SDL_CreateTextureFromSurface(renderer, playSurface);
     SDL_Rect playRect = {SCREEN_WIDTH / 2 - 50, 200, 100, 50};
     SDL_RenderCopy(renderer, playTexture, NULL, &playRect);
@@ -25,7 +26,7 @@ void drawMenu(SDL_Renderer *renderer, TTF_Font *font)
     SDL_DestroyTexture(playTexture);
 
     // Opción de menú "Ranking"
-    SDL_Surface *rankingSurface = TTF_RenderText_Solid(font, "Ranking", menuOption == 1 ? red : white);
+    SDL_Surface *rankingSurface = TTF_RenderText_Solid(font, "Ranking", GetMenuOption() == 1 ? red : white);
     SDL_Texture *rankingTexture = SDL_CreateTextureFromSurface(renderer, rankingSurface);
     SDL_Rect rankingRect = {SCREEN_WIDTH / 2 - 50, 300, 100, 50};
     SDL_RenderCopy(renderer, rankingTexture, NULL, &rankingRect);
@@ -33,7 +34,7 @@ void drawMenu(SDL_Renderer *renderer, TTF_Font *font)
     SDL_DestroyTexture(rankingTexture);
 
     // Opción de menú "Dificultad"
-    SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, "Dificultad", menuOption == 2 ? red : white);
+    SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, "Dificultad", GetMenuOption() == 2 ? red : white);
     SDL_Texture *difficultyTexture = SDL_CreateTextureFromSurface(renderer, difficultySurface);
     SDL_Rect difficultyRect = {SCREEN_WIDTH / 2 - 50, 400, 100, 50};
     SDL_RenderCopy(renderer, difficultyTexture, NULL, &difficultyRect);
@@ -43,27 +44,29 @@ void drawMenu(SDL_Renderer *renderer, TTF_Font *font)
 
 void handleMenuInput(SDL_Event event)
 {
+    int menuOption = GetMenuOption();
     switch (event.key.keysym.sym)
     {
     case SDLK_UP:
-        menuOption--;
+
+        SetMenuOption(menuOption--);
         if (menuOption < 0)
         {
-            menuOption = 2; // Volver a la última opción
+            SetMenuOption(2);
         }
         break;
     case SDLK_DOWN:
         menuOption++;
         if (menuOption > 2)
         {
-            menuOption = 0; // Volver a la primera opción
+            SetMenuOption(0);
         }
         break;
     case SDLK_RETURN:
         if (menuOption == 0)
         {
             // Opción "Jugar"
-            onMenu = 0; // Salimos del menú y empezamos el juego
+            // onMenu = 0; // Salimos del menú y empezamos el juego
         }
         else if (menuOption == 1)
         {

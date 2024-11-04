@@ -1,18 +1,20 @@
-#include "snake.h"
-#include "menu.h"
-#include "structs.h"
+#include "../settings/structs.h"
+#include "../resources/snake.h"
+#include "../ui/menu.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "sdl.h"
-#include "global.h"
+#include "../ui/sdl.h"
 #include <SDL2/SDL_ttf.h>
 
 void drawMapBorders(SDL_Renderer *renderer)
 {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Color verde
-
+    const SCREEN_WIDTH = GetScreenHeight();
+    const SCREEN_HEIGHT = GetScreenHeight();
+    const BORDER_WIDTH = GetBorderHeight();
+    const SEGMENT_SIZE = GetSegmentSize();
     // Borde superior
     SDL_Rect topBorder = {0, 0, SCREEN_WIDTH, BORDER_WIDTH};
     SDL_RenderFillRect(renderer, &topBorder);

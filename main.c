@@ -2,9 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "structs.h"
-#include "global.h"
-#include "sdl.h"
+#include "settings/settings.h"
+#include "settings/structs.h"
+#include "ui/sdl.h"
+#include "resources/food.h"
+#include "ui/menu.h"
+#include "ui/map.h"
+#include "ui/score.h"
+#include "resources/snake.h"
 
 int fileExists(const char *filename)
 {
@@ -19,9 +24,10 @@ int fileExists(const char *filename)
 
 int main()
 {
+    loadFont();
     srand(time(NULL));
-    Segment *snake = (Segment *)initializeSnake();
-    Segment *food = (Segment *)initializeFood();
+    Segment *snake = initializeSnake();
+    Segment food = initializeFood();
 
     // Inicializar SDL y TTF
     if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0)
@@ -33,7 +39,7 @@ int main()
     SDL_Window *window = SDL_CreateWindow("Snake Game",
                                           SDL_WINDOWPOS_CENTERED,
                                           SDL_WINDOWPOS_CENTERED,
-                                          SCREEN_WIDTH, SCREEN_HEIGHT,
+                                          GetScreenWidth(), GetScreenHeigth(),
                                           SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -45,14 +51,14 @@ int main()
         return 1;
     }
 
-    while (onMenu)
+    while (GetMenuOption())
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                onMenu = 0;
-                running = 0;
+                // onMenu = 0;
+                // running = 0;
             }
             else if (event.type == SDL_KEYDOWN)
             {
@@ -90,16 +96,16 @@ int main()
     if (!foodTexture)
     {
         printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
-        running = 0;
+        SetRunningStatus(0);
     }
 
-    while (running)
+    while (GetRunningStatus())
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                running = 0;
+                // running = 0;
             }
             if (event.type == SDL_KEYDOWN)
             {
@@ -107,7 +113,7 @@ int main()
             }
         }
 
-        setSnakeVel(snake, velX, velY);
+        setSnakeVel(snake);
 
         setSnakeLimits(snake);
 
@@ -117,15 +123,15 @@ int main()
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawMapBorders(renderer); // Dibujar los bordes
-        drawSnake(renderer);      // Dibujar la serpiente
-        drawFood(renderer);       // Dibujar la comida
+        drawMapBorders(renderer);   // Dibujar los bordes
+        drawSnake(renderer, snake); // Dibujar la serpiente
+        drawFood(renderer, food);   // Dibujar la comida
         drawScore(renderer);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(200);
     }
-    TTF_CloseFont(font);
+    CloseFont();
     SDL_DestroyTexture(snakeTextureUp);
     SDL_DestroyTexture(snakeTextureDown);
     SDL_DestroyTexture(snakeTextureLeft);
@@ -139,3 +145,5 @@ int main()
 
     return 0;
 }
+
+//

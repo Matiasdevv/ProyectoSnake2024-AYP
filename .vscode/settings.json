@@ -56,6 +56,15 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "stdlib.h": "c",
-    "global.h": "c"
+    "global.h": "c",
+    "structs.h": "c",
+    "score.h": "c",
+    "sdl.h": "c",
+    "map.h": "c",
+    "snake.h": "c",
+    "time.h": "c",
+    "menu.h": "c",
+    "sdl_ttf.h": "c",
+    "stdio.h": "c"
   }
 }
