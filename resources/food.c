@@ -31,7 +31,8 @@ void snakeFoodCollition(Segment snake[], Segment food)
             }
         }
 
-        food.x = random_number;  // actualizar la posición x de la comida
+        food.x = random_number; // actualizar la posición x de la comida
+
         food.y = random_number2; // actualizar la posición y de la comida
         SetSnakeLenght(GetSnakeLenght() + 1);
         SetScore(GetScore() + 1); // Aumenta el puntaje cuando come comida
