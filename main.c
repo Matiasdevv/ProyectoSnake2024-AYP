@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
 
     while (GetRunningStatus(&gameState))
     {
+        SDL_RenderClear(renderer);
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -82,13 +83,11 @@ int main(int argc, char *argv[])
             }
             else if (event.type == SDL_KEYDOWN)
             {
-                handleMenuInput(event, gameState); // Manejar la entrada del menú
+                handleMenuInput(event, &gameState); // Manejar la entrada del menú
             }
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
 
-        drawMenu(renderer, gameState); // Dibujar el menú
+        drawMenu(renderer, &gameState); // Dibujar el menú
 
         SDL_RenderPresent(renderer);
         SDL_Delay(100);

@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-void drawMenu(SDL_Renderer *renderer, GameState gamestate);
-void handleMenuInput(SDL_Event event, GameState gamestate);
+void drawMenu(SDL_Renderer *renderer, GameState *gamestate);
+void handleMenuInput(SDL_Event event, GameState *gamestate);
 
 #endif

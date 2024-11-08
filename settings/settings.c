@@ -83,6 +83,7 @@ void SetRunningStatus(GameState *gameState, int status)
 }
 void SetMenuOption(GameState *gameState, int option)
 {
+    printf("cambiando %d", option);
     gameState->menuOption = option;
 }
 

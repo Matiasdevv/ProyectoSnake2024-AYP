@@ -7,18 +7,22 @@
 #include <stdlib.h>
 #include <time.h>
 
-void drawMenu(SDL_Renderer *renderer, GameState gameState)
+void drawMenu(SDL_Renderer *renderer, GameState *gameState)
 {
-    int SCREEN_WIDTH = GetScreenHeight(&gameState);
-    int SCREEN_HEIGHT = GetScreenHeight(&gameState);
-    int BORDER_WIDTH = GetBorderWidth(&gameState);
-    int SEGMENT_SIZE = GetSegmentSize(&gameState);
+    int SCREEN_WIDTH = GetBorderWidth(gameState);   // Deberías obtener la anchura de la pantalla correctamente
+    int SCREEN_HEIGHT = GetScreenHeight(gameState); // Asegúrate de que estos valores sean correctos
+    int BORDER_WIDTH = GetBorderWidth(gameState);
+    int SEGMENT_SIZE = GetSegmentSize(gameState);
+
     // Colores
     SDL_Color white = {255, 255, 255};
-    SDL_Color red = {255, 0, 0};
-    TTF_Font *font = GetFont(&gameState);
+    SDL_Color red = {255, 0, 0}; // Rojo para la opción seleccionada
+
+    // Fuente
+    TTF_Font *font = GetFont(gameState);
+
     // Opción de menú "Jugar"
-    SDL_Surface *playSurface = TTF_RenderText_Solid((TTF_Font *)font, "Jugar", GetMenuOption(&gameState) == 0 ? red : white);
+    SDL_Surface *playSurface = TTF_RenderText_Solid(font, "Jugar", GetMenuOption(gameState) == 0 ? red : white);
     SDL_Texture *playTexture = SDL_CreateTextureFromSurface(renderer, playSurface);
     SDL_Rect playRect = {SCREEN_WIDTH / 2 - 50, 200, 100, 50};
     SDL_RenderCopy(renderer, playTexture, NULL, &playRect);
@@ -26,7 +30,7 @@ void drawMenu(SDL_Renderer *renderer, GameState gameState)
     SDL_DestroyTexture(playTexture);
 
     // Opción de menú "Ranking"
-    SDL_Surface *rankingSurface = TTF_RenderText_Solid((TTF_Font *)font, "Ranking", GetMenuOption(&gameState) == 1 ? red : white);
+    SDL_Surface *rankingSurface = TTF_RenderText_Solid(font, "Ranking", GetMenuOption(gameState) == 1 ? red : white);
     SDL_Texture *rankingTexture = SDL_CreateTextureFromSurface(renderer, rankingSurface);
     SDL_Rect rankingRect = {SCREEN_WIDTH / 2 - 50, 300, 100, 50};
     SDL_RenderCopy(renderer, rankingTexture, NULL, &rankingRect);
@@ -34,7 +38,7 @@ void drawMenu(SDL_Renderer *renderer, GameState gameState)
     SDL_DestroyTexture(rankingTexture);
 
     // Opción de menú "Dificultad"
-    SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, "Dificultad", GetMenuOption(&gameState) == 2 ? red : white);
+    SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, "Dificultad", GetMenuOption(gameState) == 2 ? red : white);
     SDL_Texture *difficultyTexture = SDL_CreateTextureFromSurface(renderer, difficultySurface);
     SDL_Rect difficultyRect = {SCREEN_WIDTH / 2 - 50, 400, 100, 50};
     SDL_RenderCopy(renderer, difficultyTexture, NULL, &difficultyRect);
@@ -42,43 +46,45 @@ void drawMenu(SDL_Renderer *renderer, GameState gameState)
     SDL_DestroyTexture(difficultyTexture);
 }
 
-void handleMenuInput(SDL_Event event, GameState *gamestate)
+void handleMenuInput(SDL_Event event, GameState *gameState)
 {
-    int menuOption = GetMenuOption(gamestate);
+    int menuOption = GetMenuOption(gameState); // Obtener la opción del menú actual
     switch (event.key.keysym.sym)
     {
     case SDLK_UP:
-        SetMenuOption(gamestate, menuOption--);
+        // Decrementar la opción seleccionada (si no es menor que 0, en cuyo caso va a la opción 2)
+        menuOption--;
         if (menuOption < 0)
         {
-            SetMenuOption(gamestate, 2);
+            menuOption = 2; // Opción "Dificultad" (última opción)
         }
+        SetMenuOption(gameState, menuOption); // Actualizar el estado global
         break;
     case SDLK_DOWN:
-        SetMenuOption(gamestate, GetMenuOption(gamestate) + 1);
+        // Incrementar la opción seleccionada (si no es mayor que 2, en cuyo caso va a la opción 0)
+        menuOption++;
         if (menuOption > 2)
         {
-            SetMenuOption(gamestate, 0);
+            menuOption = 0; // Opción "Jugar" (primera opción)
         }
+        SetMenuOption(gameState, menuOption); // Actualizar el estado global
         break;
     case SDLK_RETURN:
+        // Manejar las opciones seleccionadas
         if (menuOption == 0)
         {
-            // Opción "Jugar"
-            // onMenu = 0; // Salimos del menú y empezamos el juego
             printf("Arrancando juego principal...\n");
+            // Implementar la lógica para iniciar el juego
         }
         else if (menuOption == 1)
         {
-            // Opción "Ranking"
-            // Aquí puedes implementar la lógica para mostrar el ranking
             printf("Mostrando ranking...\n");
+            // Implementar la lógica para mostrar el ranking
         }
         else if (menuOption == 2)
         {
-            // Opción "Dificultad"
-            // Aquí puedes implementar la lógica para cambiar la dificultad
             printf("Seleccionando dificultad...\n");
+            // Implementar la lógica para cambiar la dificultad
         }
         break;
     }
