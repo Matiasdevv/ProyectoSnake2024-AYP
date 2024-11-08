@@ -3,11 +3,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include "../settings/structs.h"
+#include "../settings/settings.h"
 
-// Función para verificar colisión del cuerpo de la serpiente
-void snakeBodyCollition(Segment snake[])
+SDL_Rect newSnakeHead(Segment *snake)
 {
-    int snakeLength = GetSnakeLength();
+    // Detección de colisión entre la serpiente y la comida
+    SDL_Rect snakeHead = {snake[0].x, snake[0].y, snake[0].w, snake[0].h};
+}
+// Función para verificar colisión del cuerpo de la serpiente
+void snakeBodyCollition(GameState *gamestate, Segment *snake)
+{
+    int snakeLength = GetSnakeLength(gamestate);
 
     // Verifica si la cabeza colisiona con algún segmento del cuerpo
     for (int i = 1; i < snakeLength; i++)
@@ -17,91 +23,57 @@ void snakeBodyCollition(Segment snake[])
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
-            SetRunningStatus(0);
+            SetRunningStatus(gamestate, 0);
         }
     }
 }
 
-void setSnakeVel(Segment snake[])
+void snakeMovement(SDL_Event event, GameState *gamestate)
 {
-    int snakeLength = GetSnakeLength();
-    for (int i = snakeLength - 1; i > 0; i--)
-    {
-        snake[i] = snake[i - 1];
-    }
-
-    // snake[0].x += velX;
-    // snake[0].y += velY;
-}
-
-void setSnakeLimits(Segment snake[])
-{
-    const SCREEN_WIDTH = GetScreenHeight();
-    const SCREEN_HEIGHT = GetScreenHeight();
-    const BORDER_WIDTH = GetBorderHeight();
-    const SEGMENT_SIZE = GetSegmentSize();
-    if (snake[0].x < BORDER_WIDTH)
-    {
-        snake[0].x = BORDER_WIDTH;
-    }
-    else if (snake[0].x >= SCREEN_WIDTH - BORDER_WIDTH)
-    {
-        snake[0].x = SCREEN_WIDTH - BORDER_WIDTH - SEGMENT_SIZE;
-    }
-    if (snake[0].y < BORDER_WIDTH)
-    {
-        snake[0].y = BORDER_WIDTH;
-    }
-    else if (snake[0].y >= SCREEN_HEIGHT - BORDER_WIDTH)
-    {
-        snake[0].y = SCREEN_HEIGHT - BORDER_WIDTH - SEGMENT_SIZE;
-    }
-}
-
-void snakeMovement(SDL_Event event)
-{
-    const SEGMENT_SIZE = GetSegmentSize();
+    const int SEGMENT_SIZE = GetSegmentSize(gamestate);
     switch (event.key.keysym.sym)
     {
     case SDLK_UP:
-        if (GetVelY() == 0)
+        if (GetSnakeVelY(gamestate) == 0)
         { // Solo puede ir hacia arriba si no está yendo hacia arriba o abajo
-            SetVelX(0);
-            SetVelY(-SEGMENT_SIZE);
+            SetSnakeVelX(gamestate, 0);
+            SetSnakeVelX(gamestate, -SEGMENT_SIZE);
         }
         break;
     case SDLK_DOWN:
-        if (GetVelY() == 0)
+        if (GetSnakeVelY(gamestate) == 0)
         { // Solo puede ir hacia abajo si no está yendo hacia arriba o abajo
-            SetVelX(0);
-            SetVelY(SEGMENT_SIZE);
+
+            SetSnakeVelX(gamestate, 0);
+            SetSnakeVelX(gamestate, SEGMENT_SIZE);
         }
         break;
     case SDLK_LEFT:
-        if (GetVelX() == 0)
+        if (GetSnakeVelX(gamestate) == 0)
         { // Solo puede ir hacia la izquierda si no está yendo hacia la izquierda o derecha
-            SetVelX(-SEGMENT_SIZE);
 
-            SetVelY(0);
+            SetSnakeVelX(gamestate, -SEGMENT_SIZE);
+            SetSnakeVelX(gamestate, 0);
         }
         break;
     case SDLK_RIGHT:
-        if (GetVelX() == 0)
+        if (GetSnakeVelX(gamestate) == 0)
         { // Solo puede ir hacia la derecha si no está yendo hacia la izquierda o derecha
-            SetVelX(SEGMENT_SIZE);
-            SetVelY(0);
+
+            SetSnakeVelX(gamestate, SEGMENT_SIZE);
+            SetSnakeVelX(gamestate, 0);
         }
         break;
     }
 }
 
-Segment *initializeSnake()
+Segment *initializeSnake(GameState *gamsetate)
 {
-    const MAX_SNAKE_LENGTH = GetMaxSnakeLength();
-    const SCREEN_WIDTH = GetScreenHeight();
-    const SCREEN_HEIGHT = GetScreenHeight();
-    const BORDER_WIDTH = GetBorderHeight();
-    const SEGMENT_SIZE = GetSegmentSize();
+    const int MAX_SNAKE_LENGTH = GetMaxSnakeLength(gamsetate);
+    const int SCREEN_WIDTH = GetScreenHeight(gamsetate);
+    const int SCREEN_HEIGHT = GetScreenHeight(gamsetate);
+    // const int BORDER_WIDTH = GetBorderHeight(gamsetate);
+    const int SEGMENT_SIZE = GetSegmentSize(gamsetate);
     Segment *snake = malloc(MAX_SNAKE_LENGTH * sizeof(Segment));
     if (snake == NULL)
     {

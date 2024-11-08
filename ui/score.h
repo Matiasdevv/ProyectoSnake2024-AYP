@@ -1,6 +1,6 @@
-#include <SDL2/SDL.h>
 
 #ifndef SCORE_H_ /* Include guard */
 #define SCORE_H_
-void drawScore(SDL_Renderer *renderer);
+#include <SDL2/SDL.h>
+void drawScore(SDL_Renderer *renderer, GameState gamestate);
 #endif

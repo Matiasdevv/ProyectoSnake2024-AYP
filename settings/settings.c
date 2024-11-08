@@ -1,98 +1,144 @@
 #include <SDL2/SDL_ttf.h>
+#include "structs.h"
+#include "settings.h"
 
-int SCREEN_WIDTH = 1280;
-int SCREEN_HEIGHT = 720;
-int SEGMENT_SIZE = 40;
-int BORDER_WIDTH = 40;
-int MAX_SNAKE_LENGTH = 100;
-
-int menuOption = 0;
-int onMenu = 1;
-int score = 0;
-int snakeLength = 0;
-int running = 1;
-int velX = 0;
-int velY = 0;
-
-TTF_Font *font = NULL; // Inicialización de font
-
-TTF_Font *GetFont()
+// Inicializa el estado del juego con valores predeterminados
+void InitGameState(GameState *gameState)
 {
-    // Asegúrate de cargar la fuente una vez y verifica que no sea NULL
-    font = TTF_OpenFont("../fonts/ComicSansMS3.ttf", 24);
-    if (!font)
+    gameState->screenWidth = 1280;
+    gameState->screenHeight = 720;
+    gameState->segmentSize = 40;
+    gameState->borderWidth = 40;
+    gameState->maxSnakeLength = 100;
+
+    gameState->menuOption = 0;
+    gameState->onMenu = 1;
+    gameState->score = 0;
+    gameState->snakeLength = 0;
+    gameState->running = 1;
+    gameState->velX = 0;
+    gameState->velY = 0;
+    gameState->font = NULL;
+}
+
+// Definición de las variables globales
+SDL_Color textColor = {255, 255, 255}; // Color blanco
+SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight;
+SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
+SDL_Event event;
+SDL_Texture *foodTexture;
+
+// Carga la fuente y verifica errores
+TTF_Font *GetFont(GameState *gameState)
+{
+    gameState->font = TTF_OpenFont("fonts/ComicSansMS3.ttf", 24);
+    if (!gameState->font)
     {
         printf("Error al cargar la fuente: %s\n", TTF_GetError());
         SDL_Quit();
-        SetRunningStatus(0);
-        return NULL; // Retorna NULL en caso de error para evitar dereferenciar un puntero inválido
+        SetRunningStatus(gameState, 0);
+        return NULL;
     }
-    return font;
+    return gameState->font;
 }
 
-void SetMenuOption(int menuOption)
+void CloseFont(GameState *gameState)
 {
-    menuOption = menuOption;
+    if (gameState->font)
+    {
+        TTF_CloseFont(gameState->font);
+        gameState->font = NULL;
+    }
 }
 
-void CloseFont()
-{
+// Funciones de acceso y modificación para las variables en GameState
 
-    TTF_CloseFont(font);
-}
-
-int GetScore()
+int GetScore(GameState *gameState)
 {
-    return score;
-}
-int GetMenuOption()
-{
-    return menuOption;
+    return gameState->score;
 }
 
-int GetsnakeLength()
+int GetMenuOption(GameState *gameState)
 {
-    return snakeLength;
-}
-int GetRunningStatus()
-{
-    return running;
-}
-int GetBorderWidth()
-{
-    return BORDER_WIDTH;
-}
-int GetSegmentSize()
-{
-    return SEGMENT_SIZE;
-}
-int GetBorderHeigth()
-{
-    return BORDER_WIDTH;
-}
-void SetRunningStatus(int status)
-{
-    running = status;
+    return gameState->menuOption;
 }
 
-int GetSnakeVelY()
+int GetSnakeLength(GameState *gameState)
 {
-    return velY;
+    return gameState->snakeLength;
 }
-void SetSnakeVelY(int velY)
+int GetBorderWidth(GameState *gameState)
 {
-    velY += velY;
-}
-int GetSnakeVelX()
-{
-    return velX;
-}
-void SetSnakeVelX(int velX)
-{
-    velX += velX;
+    return gameState->borderWidth;
 }
 
-int GetMaxSnakeLength()
+int GetRunningStatus(GameState *gameState)
 {
-    return MAX_SNAKE_LENGTH;
-};
+    return gameState->running;
+}
+
+void SetRunningStatus(GameState *gameState, int status)
+{
+    gameState->running = status;
+}
+void SetMenuOption(GameState *gameState, int option)
+{
+    gameState->menuOption = option;
+}
+
+int GetSnakeVelY(GameState *gameState)
+{
+    return gameState->velY;
+}
+
+void SetSnakeVelY(GameState *gameState, int velY)
+{
+    gameState->velY = velY;
+}
+
+int GetSnakeVelX(GameState *gameState)
+{
+    return gameState->velX;
+}
+
+void SetSnakeVelX(GameState *gameState, int velX)
+{
+    gameState->velX = velX;
+}
+
+int GetMaxSnakeLength(GameState *gameState)
+{
+    return gameState->maxSnakeLength;
+}
+int GetSegmentSize(GameState *gameState)
+{
+    return gameState->segmentSize;
+}
+int GetScreenHeight(GameState *gameState)
+{
+    return gameState->screenHeight;
+}
+
+void setSnakeLimits(GameState *gamestate, Segment *snake)
+{
+    const int SCREEN_WIDTH = GetScreenHeight(gamestate);
+    const int SCREEN_HEIGHT = GetScreenHeight(gamestate);
+    const int BORDER_WIDTH = GetBorderWidth(gamestate);
+    const int SEGMENT_SIZE = GetSegmentSize(gamestate);
+    if (snake[0].x < BORDER_WIDTH)
+    {
+        snake[0].x = BORDER_WIDTH;
+    }
+    else if (snake[0].x >= SCREEN_WIDTH - BORDER_WIDTH)
+    {
+        snake[0].x = SCREEN_WIDTH - BORDER_WIDTH - SEGMENT_SIZE;
+    }
+    if (snake[0].y < BORDER_WIDTH)
+    {
+        snake[0].y = BORDER_WIDTH;
+    }
+    else if (snake[0].y >= SCREEN_HEIGHT - BORDER_WIDTH)
+    {
+        snake[0].y = SCREEN_HEIGHT - BORDER_WIDTH - SEGMENT_SIZE;
+    }
+}

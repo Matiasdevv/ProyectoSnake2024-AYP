@@ -2,21 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "sdl.h"
 #include "../settings/structs.h"
+#include "../settings/settings.h"
 #include <SDL2/SDL_ttf.h>
 
 // Dibujar el puntaje
-void drawScore(SDL_Renderer *renderer)
+void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
     // Preparar el texto del puntaje
     char scoreText[20];
-    sprintf(scoreText, "Score: %d", Getscore()); // Convierte el puntaje a cadena de texto
+    sprintf(scoreText, "Score: %d", GetScore(gamestate)); // Convierte el puntaje a cadena de texto
 
     // Renderizar el texto del puntaje a una superficie
-    const TTF_Font *font = GetFont();
+    TTF_Font *font = GetFont(gamestate);
 
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, scoreText, textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Solid((TTF_Font *)font, scoreText, textColor);
     if (!textSurface)
     {
         printf("Error al crear la superficie del texto: %s\n", TTF_GetError());
@@ -33,7 +33,7 @@ void drawScore(SDL_Renderer *renderer)
     }
 
     // Posicionar el puntaje en pantalla
-    SDL_Rect textRect = {GetBorderWidth(), GetBorderWidth() - textSurface->h + 6, textSurface->w, textSurface->h};
+    SDL_Rect textRect = {GetBorderWidth(gamestate), GetBorderWidth(gamestate) - textSurface->h + 6, textSurface->w, textSurface->h};
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect); // Renderiza el texto
 
     // Limpiar memoria de superficie y textura

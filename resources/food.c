@@ -1,24 +1,33 @@
 #include "../settings/structs.h"
+#include "../settings/settings.h"
 #include "snake.h"
-#include "../ui/sdl.h"
 #include <SDL2/SDL.h>
 
-void snakeFoodCollition(Segment snake[], Segment food)
+SDL_Rect newFoodRect(Segment food)
 {
-    // Detección de colisión entre la serpiente y la comida
-    SDL_Rect snakeHead = {snake[0].x, snake[0].y, snake[0].w, snake[0].h};
     SDL_Rect foodRect = {food.x, food.y, food.w, food.h};
+}
+
+void setFoodPosition(int x, int y, Segment food)
+{
+    food.x = x;
+    food.y = y;
+}
+void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
+{
+    SDL_Rect snakeHead = newSnakeHead(snake);
+    SDL_Rect foodRect = newFoodRect(*food);
 
     if (SDL_HasIntersection(&snakeHead, &foodRect))
     {
-        int random_number = (rand() % 31) * GetSegmentSize(); // generar número aleatorio dentro de la cuadrícula
-        int random_number2 = (rand() % 17) * GetSegmentSize();
+        int random_number = (rand() % 31) * GetSegmentSize(gamestate); // generar número aleatorio dentro de la cuadrícula
+        int random_number2 = (rand() % 17) * GetSegmentSize(gamestate);
 
         if (random_number == 0)
         {
             while (random_number == 0)
             {
-                random_number = (rand() % 31) * GetSegmentSize(); // seguir generando números hasta que sea distinto de 0
+                random_number = (rand() % 31) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
             }
         }
 
@@ -27,17 +36,13 @@ void snakeFoodCollition(Segment snake[], Segment food)
         {
             while (random_number2 == 0)
             {
-                random_number2 = (rand() % 17) * GetSegmentSize(); // seguir generando números hasta que sea distinto de 0
+                random_number2 = (rand() % 17) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
             }
         }
 
-        food.x = random_number; // actualizar la posición x de la comida
-
-        food.y = random_number2; // actualizar la posición y de la comida
-        SetSnakeLenght(GetSnakeLenght() + 1);
-        SetScore(GetScore() + 1); // Aumenta el puntaje cuando come comida
-        printf("cordenada x %d \n", food.x);
-        printf("cordenada y %d \n", food.y);
+        setFoodPosition(random_number, random_number2, *food);
+        // SetSnakeLength(GetSnakeLength(gamestate) + 1);
+        // SetScore(GetScore(gamestate) + 1); // Aumenta el puntaje cuando come comida
     }
 }
 
@@ -47,19 +52,19 @@ void drawFood(SDL_Renderer *renderer, Segment food)
     SDL_RenderCopy(renderer, foodTexture, NULL, &foodRect);
 }
 
-Segment initializeFood()
+Segment initializeFood(GameState *gamestate)
 {
     Segment food;
-    food.x = (rand() % 31) * GetSegmentSize();
-    food.y = (rand() % 17) * GetSegmentSize();
-    food.w = GetSegmentSize();
-    food.h = GetSegmentSize();
+    food.x = (rand() % 31) * GetSegmentSize(gamestate);
+    food.y = (rand() % 17) * GetSegmentSize(gamestate);
+    food.w = GetSegmentSize(gamestate);
+    food.h = GetSegmentSize(gamestate);
 
     if (food.x == 0)
     {
         while (food.x == 0)
         {
-            food.x = (rand() % 31) * GetSegmentSize(); // seguir generando números hasta que sea distinto de 0
+            food.x = (rand() % 31) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
         }
     }
 
@@ -68,7 +73,7 @@ Segment initializeFood()
     {
         while (food.y == 0)
         {
-            food.y = (rand() % 17) * GetSegmentSize(); // seguir generando números hasta que sea distinto de 0
+            food.y = (rand() % 17) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
         }
     }
     printf("cordenada x %d \n", food.x);

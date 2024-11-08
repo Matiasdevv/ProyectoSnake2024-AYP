@@ -19,3 +19,6 @@ $(TARGET): $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(TARGET)
+
+
+# gcc -o main main.c     resources/snake.c     resources/food.c     ui/score.c    ui/sdl.c  ui/map.c     ui/menu.c     -lSDL2 -lSDL2_ttf $(pkg-config --cflags --libs sdl2)

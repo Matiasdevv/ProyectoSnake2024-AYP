@@ -5,9 +5,10 @@
 #define FOOD_H_
 
 void snakeFoodCollition();
+SDL_Rect newFoodRect(Segment food);
+void setFoodPosition(int x, int y, Segment food);
+void drawFood(GameState *gamestate, SDL_Renderer *renderer, Segment *food);
 
-void drawFood(SDL_Renderer *renderer, Segment food);
+Segment initializeFood(GameState *gamestate);
 
-Segment initializeFood();
-
-#endif // FOO_H_
+#endif
