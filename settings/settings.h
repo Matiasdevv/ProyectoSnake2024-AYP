@@ -26,7 +26,7 @@ typedef struct
 } GameState;
 
 extern SDL_Color textColor; // Color blanco
-extern SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight;
+extern SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft , *snakeTurnTextureUpRight , *snakeTurnTextureDownRight , *snakeTurnTextureDownLeft ;
 extern SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
 extern SDL_Event event;
 extern SDL_Texture *foodTexture;
@@ -55,6 +55,9 @@ int GetBorderWidth(GameState *gameState);
 
 int GetSegmentSize(GameState *gameState);
 int GetScreenHeight(GameState *gameState);
+int GetScreenWidth(GameState *gameState);
 int GetMaxSnakeLength(GameState *gameState);
+int GetMenuStatus(GameState *gameState);
+int SetMenuStatus(GameState *gameState, int status);
 
 #endif // GAME_H

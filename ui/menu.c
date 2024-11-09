@@ -9,7 +9,7 @@
 
 void drawMenu(SDL_Renderer *renderer, GameState *gameState)
 {
-    int SCREEN_WIDTH = GetBorderWidth(gameState);   // Deberías obtener la anchura de la pantalla correctamente
+    int SCREEN_WIDTH = GetScreenWidth(gameState);   // Deberías obtener la anchura de la pantalla correctamente
     int SCREEN_HEIGHT = GetScreenHeight(gameState); // Asegúrate de que estos valores sean correctos
     int BORDER_WIDTH = GetBorderWidth(gameState);
     int SEGMENT_SIZE = GetSegmentSize(gameState);
@@ -74,17 +74,23 @@ void handleMenuInput(SDL_Event event, GameState *gameState)
         if (menuOption == 0)
         {
             printf("Arrancando juego principal...\n");
+            SetMenuOption(gameState, menuOption); // Actualizar el estado global
+            SetMenuStatus(gameState, 0);
             // Implementar la lógica para iniciar el juego
         }
         else if (menuOption == 1)
         {
             printf("Mostrando ranking...\n");
+            SetMenuOption(gameState, menuOption); // Actualizar el estado global
+            SetMenuStatus(gameState, 0);
             // Implementar la lógica para mostrar el ranking
         }
         else if (menuOption == 2)
         {
             printf("Seleccionando dificultad...\n");
             // Implementar la lógica para cambiar la dificultad
+            SetMenuOption(gameState, menuOption); // Actualizar el estado global
+            SetMenuStatus(gameState, 0);
         }
         break;
     }

@@ -71,56 +71,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // while (GetRunningStatus(&gameState))
-    // {
-    //     SDL_RenderClear(renderer);
-    //     while (SDL_PollEvent(&event))
-    //     {
-    //         if (event.type == SDL_QUIT)
-    //         {
-    //             SetMenuOption(&gameState, 0);
-    //             SetRunningStatus(&gameState, 0);
-    //         }
-    //         else if (event.type == SDL_KEYDOWN)
-    //         {
-    //             handleMenuInput(event, &gameState); // Manejar la entrada del menú
-    //         }
-    //     }
-
-    //     drawMenu(renderer, &gameState); // Dibujar el menú
-
-    //     SDL_RenderPresent(renderer);
-    //     SDL_Delay(100);
-    // }
-
-    // snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_up.bmp"));
-    // snakeTextureDown = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_down.bmp"));
-    // snakeTextureLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_left.bmp"));
-    // snakeTextureRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_right.bmp"));
-    // snakeBodyTextureHorizontal = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_body_horizontal.bmp"));
-    // snakeBodyTextureVertical = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_body_vertical.bmp"));
-
-    // snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/Turn_up_left.bmp"));
-    // snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/Turn_up_right.bmp"));
-    // snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/Turn_down_right.bmp"));
-    // snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/Turn_down_left.bmp"));
-
-    // if (!snakeTextureUp || !snakeTextureDown || !snakeTextureLeft || !snakeTextureRight ||
-    //     !snakeBodyTextureHorizontal || !snakeBodyTextureVertical || !snakeTurnTextureUpLeft ||
-    //     !snakeTurnTextureUpRight || !snakeTurnTextureDownRight || !snakeTurnTextureDownLeft)
-    // {
-    //     printf("Error al cargar texturas: %s\n", SDL_GetError());
-    //     return 1;
-    // }
-
-    // foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/food_sprite.bmp"));
-    // if (!foodTexture)
-    // {
-    //     printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
-    //     SetRunningStatus(&gameState, 0);
-    // }
-
-    if (!window)
+        if (!window)
     {
         printf("Error al crear la ventana: %s\n", SDL_GetError());
         CloseFont(&gameState);
@@ -129,8 +80,56 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    while (GetRunningStatus(&gameState))
+    while (GetRunningStatus(&gameState) && GetMenuStatus(&gameState) == 1)
     {
+        SDL_RenderClear(renderer);
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                SetMenuOption(&gameState, 0);
+                SetRunningStatus(&gameState, 0);
+            }
+            else if (event.type == SDL_KEYDOWN)
+            {
+                handleMenuInput(event, &gameState); // Manejar la entrada del menú
+            }
+        }
+
+        drawMenu(renderer, &gameState); // Dibujar el menú
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(100);
+    }
+
+    snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_up.bmp"));
+    snakeTextureDown = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_down.bmp"));
+    snakeTextureLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_left.bmp"));
+    snakeTextureRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_right.bmp"));
+    snakeBodyTextureHorizontal = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_body_horizontal.bmp"));
+    snakeBodyTextureVertical = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_body_vertical.bmp"));
+
+    snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
+    snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
+    snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
+    snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
+
+    if (!snakeTextureUp || !snakeTextureDown || !snakeTextureLeft || !snakeTextureRight ||
+        !snakeBodyTextureHorizontal || !snakeBodyTextureVertical || !snakeTurnTextureUpLeft ||
+        !snakeTurnTextureUpRight || !snakeTurnTextureDownRight || !snakeTurnTextureDownLeft)
+    {
+        printf("Error al cargar texturas: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprite/food_sprite.bmp"));
+    if (!foodTexture)
+    {
+        printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
+        SetRunningStatus(&gameState, 0);
+    }
+
+    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0){
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -143,23 +142,17 @@ int main(int argc, char *argv[])
             }
         }
 
-        // for (int i = GetSnakeLength(&gameState) - 1; i > 0; i--)
-        // {
-        //     snake[i] = snake[i - 1];
-        // }
 
-        // snake[0].x += velX;
-        // snake[0].y += velY;
 
         setSnakeLimits(&gameState, snake);
 
-        snakeFoodCollition();                  // Verificar colisión con la comida
+        snakeFoodCollition(&gameState,snake, &food);                  // Verificar colisión con la comida
         snakeBodyCollition(&gameState, snake); // Verificar colisión con el cuerpo
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawMapBorders(renderer);               // Dibujar los bordes
+        drawMapBorders(renderer, gameState);               // Dibujar los bordes
         drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
         drawFood(&gameState, renderer, &food);  // Dibujar la comida
         drawScore(renderer, gameState);
@@ -167,6 +160,7 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(renderer);
         SDL_Delay(200);
     }
+
 
     // Limpiar recursos antes de salir
     CloseFont(&gameState);

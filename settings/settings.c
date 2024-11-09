@@ -23,7 +23,7 @@ void InitGameState(GameState *gameState)
 
 // Definición de las variables globales
 SDL_Color textColor = {255, 255, 255}; // Color blanco
-SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight;
+SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft , *snakeTurnTextureUpRight , *snakeTurnTextureDownRight , *snakeTurnTextureDownLeft ;
 SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
 SDL_Event event;
 SDL_Texture *foodTexture;
@@ -118,6 +118,18 @@ int GetSegmentSize(GameState *gameState)
 int GetScreenHeight(GameState *gameState)
 {
     return gameState->screenHeight;
+}
+int GetScreenWidth(GameState *gameState)
+{
+    return gameState->screenWidth;
+}
+int GetMenuStatus(GameState *gameState)
+{
+    return gameState->onMenu;
+}
+int SetMenuStatus(GameState *gameState, int status)
+{
+     gameState->onMenu = status;
 }
 
 void setSnakeLimits(GameState *gamestate, Segment *snake)

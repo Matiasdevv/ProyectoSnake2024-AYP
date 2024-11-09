@@ -6,6 +6,13 @@ void drawSnake(SDL_Renderer *renderer, Segment *snake, GameState *gamestate)
     for (int i = 0; i < GetSnakeLength(gamestate); i++)
     {
         SDL_Rect rect = {snake[i].x, snake[i].y, snake[i].w, snake[i].h};
+        for (int i = GetSnakeLength(gamestate) - 1; i > 0; i--)
+        {
+            snake[i] = snake[i - 1];
+        }
+
+        snake[0].x += GetSnakeVelX(gamestate);
+        snake[0].y += GetSnakeVelY(gamestate);
 
         if (i == 0)
         { // Cabeza

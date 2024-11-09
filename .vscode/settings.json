@@ -67,6 +67,7 @@
     "sdl_ttf.h": "c",
     "stdio.h": "c",
     "settings.h": "c",
-    "food.h": "c"
+    "food.h": "c",
+    "draw.h": "c"
   }
 }
