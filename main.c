@@ -71,27 +71,27 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    while (GetRunningStatus(&gameState))
-    {
-        SDL_RenderClear(renderer);
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
-                SetMenuOption(&gameState, 0);
-                SetRunningStatus(&gameState, 0);
-            }
-            else if (event.type == SDL_KEYDOWN)
-            {
-                handleMenuInput(event, &gameState); // Manejar la entrada del menú
-            }
-        }
+    // while (GetRunningStatus(&gameState))
+    // {
+    //     SDL_RenderClear(renderer);
+    //     while (SDL_PollEvent(&event))
+    //     {
+    //         if (event.type == SDL_QUIT)
+    //         {
+    //             SetMenuOption(&gameState, 0);
+    //             SetRunningStatus(&gameState, 0);
+    //         }
+    //         else if (event.type == SDL_KEYDOWN)
+    //         {
+    //             handleMenuInput(event, &gameState); // Manejar la entrada del menú
+    //         }
+    //     }
 
-        drawMenu(renderer, &gameState); // Dibujar el menú
+    //     drawMenu(renderer, &gameState); // Dibujar el menú
 
-        SDL_RenderPresent(renderer);
-        SDL_Delay(100);
-    }
+    //     SDL_RenderPresent(renderer);
+    //     SDL_Delay(100);
+    // }
 
     // snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_up.bmp"));
     // snakeTextureDown = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("resources/sprite/snake_head_down.bmp"));
@@ -159,9 +159,9 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawMapBorders(renderer);              // Dibujar los bordes
-        drawSnake(renderer, snake, gameState); // Dibujar la serpiente
-        drawFood(&gameState, renderer, &food); // Dibujar la comida
+        drawMapBorders(renderer);               // Dibujar los bordes
+        drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
+        drawFood(&gameState, renderer, &food);  // Dibujar la comida
         drawScore(renderer, gameState);
 
         SDL_RenderPresent(renderer);
