@@ -3,6 +3,8 @@
 #define SNAKE_H
 
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL.h>
+
 #include "structs.h"
 
 // Estructura que contiene el estado completo del juego
@@ -36,7 +38,7 @@ extern SDL_Texture *foodTexture;
 void InitGameState(GameState *gameState);
 TTF_Font *GetFont(GameState *gameState);
 void CloseFont(GameState *gameState);
-
+void LoadTextures(GameState *gamestate, SDL_Renderer *renderer);
 // Accesores y modificadores
 int GetScore(GameState *gameState);
 int GetMenuOption(GameState *gameState);
@@ -59,5 +61,16 @@ int GetScreenWidth(GameState *gameState);
 int GetMaxSnakeLength(GameState *gameState);
 int GetMenuStatus(GameState *gameState);
 int SetMenuStatus(GameState *gameState, int status);
-
+SDL_Texture* getSnakeTextureUp();
+SDL_Texture* getSnakeTextureDown();
+SDL_Texture* getSnakeTextureLeft();
+SDL_Texture* getSnakeTextureRight();
+SDL_Texture* getSnakeTurnTextureUpLeft();
+SDL_Texture* getSnakeTurnTextureUpRight();
+SDL_Texture* getSnakeTurnTextureDownRight();
+SDL_Texture* getSnakeTurnTextureDownLeft();
+SDL_Texture* getSnakeBodyTextureHorizontal();
+SDL_Texture* getSnakeBodyTextureVertical();
+SDL_Texture* getFoodTexture();
+SDL_Color getTextColor();
 #endif // GAME_H
