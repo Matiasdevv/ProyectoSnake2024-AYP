@@ -40,9 +40,6 @@ int main(int argc, char *argv[])
     // Declarar e inicializar el estado del juego
     GameState gameState;
     InitGameState(&gameState);
-    // Aquí empieza el juego después de que se sale del menú
-    Segment *snake = initializeSnake(&gameState);
-    Segment food = (Segment)initializeFood(&gameState);
 
     // Cargar la fuente
     if (!GetFont(&gameState))
@@ -103,7 +100,9 @@ int main(int argc, char *argv[])
     }
 
     LoadTextures(&gameState, renderer);
-
+    // Aquí empieza el juego después de que se sale del menú
+    Segment *snake = initializeSnake(&gameState);
+    Segment food = (Segment)initializeFood(&gameState);
     while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0)
     {
         while (SDL_PollEvent(&event))
@@ -128,8 +127,9 @@ int main(int argc, char *argv[])
 
         drawMapBorders(renderer, gameState);    // Dibujar los bordes
         drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
-        drawFood(&gameState, renderer, &food);  // Dibujar la comida
-        drawScore(renderer, gameState);
+
+        drawFood(renderer, &food); // Dibujar la comida
+        // drawScore(renderer, gameState);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(200);

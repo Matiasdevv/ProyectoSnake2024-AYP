@@ -42,7 +42,7 @@ void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
 
         SetFoodPosition(random_number, random_number2, *food);
         SetSnakeLength(gamestate, GetSnakeLength(gamestate) + 1);
-        UpdateScore(gamestate);
+        // UpdateScore(gamestate);
     }
 }
 

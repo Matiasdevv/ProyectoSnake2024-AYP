@@ -9,14 +9,20 @@
 // Dibujar el puntaje
 void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
+    int score = GetScore(gamestate);
+    printf("score %d", score);
     // Preparar el texto del puntaje
     char scoreText[20];
-    sprintf(scoreText, "Score: %d", GetScore(gamestate)); // Convierte el puntaje a cadena de texto
+    sprintf(scoreText, "Score: %d", score); // Convierte el puntaje a cadena de texto
 
     // Renderizar el texto del puntaje a una superficie
     TTF_Font *font = GetFont(gamestate);
+    if (!font)
+    {
+        printf("roto");
+    }
 
-    SDL_Surface *textSurface = TTF_RenderText_Solid((TTF_Font *)font, scoreText, textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Solid((TTF_Font *)font, scoreText, getTextColor());
     if (!textSurface)
     {
         printf("Error al crear la superficie del texto: %s\n", TTF_GetError());

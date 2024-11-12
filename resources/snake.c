@@ -49,15 +49,14 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
         }
         break;
     case SDLK_LEFT:
-        if (GetSnakeVelX(gamestate) == 0)
+        if (GetSnakeVelX(gamestate) <= 0)
         { // Solo puede ir hacia la izquierda si no está yendo hacia la izquierda o derecha
-
             SetSnakeVelX(gamestate, -SEGMENT_SIZE);
             SetSnakeVelY(gamestate, 0);
         }
         break;
     case SDLK_RIGHT:
-        if (GetSnakeVelX(gamestate) == 0)
+        if (GetSnakeVelX(gamestate) >= 0)
         { // Solo puede ir hacia la derecha si no está yendo hacia la izquierda o derecha
             SetSnakeVelX(gamestate, SEGMENT_SIZE);
             SetSnakeVelY(gamestate, 0);
@@ -69,7 +68,7 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
 Segment *initializeSnake(GameState *gamsetate)
 {
     const int MAX_SNAKE_LENGTH = GetMaxSnakeLength(gamsetate);
-    const int SCREEN_WIDTH = GetScreenHeight(gamsetate);
+    const int SCREEN_WIDTH = GetScreenWidth(gamsetate);
     const int SCREEN_HEIGHT = GetScreenHeight(gamsetate);
     // const int BORDER_WIDTH = GetBorderHeight(gamsetate);
     const int SEGMENT_SIZE = GetSegmentSize(gamsetate);

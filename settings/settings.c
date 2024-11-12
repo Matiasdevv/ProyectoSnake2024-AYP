@@ -143,10 +143,10 @@ int SetMenuStatus(GameState *gameState, int status)
 
 void setSnakeLimits(GameState *gamestate, Segment *snake)
 {
-    const int SCREEN_WIDTH = GetScreenHeight(gamestate);
-    const int SCREEN_HEIGHT = GetScreenHeight(gamestate);
-    const int BORDER_WIDTH = GetBorderWidth(gamestate);
-    const int SEGMENT_SIZE = GetSegmentSize(gamestate);
+    int SCREEN_WIDTH = GetScreenWidth(gamestate);
+    int SCREEN_HEIGHT = GetScreenHeight(gamestate);
+    int BORDER_WIDTH = GetBorderWidth(gamestate);
+    int SEGMENT_SIZE = GetSegmentSize(gamestate);
     if (snake[0].x < BORDER_WIDTH)
     {
         snake[0].x = BORDER_WIDTH;
