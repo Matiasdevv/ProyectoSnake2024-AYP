@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 
 Segment *initializeSnake(GameState *gameState);
-SDL_Rect newSnakeHead(Segment *snake);
 void snakeMovement(SDL_Event event, GameState *gameState);
 void snakeBodyCollition(GameState *gamestate, Segment *snake);
 

@@ -10,7 +10,6 @@
 void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
     int score = GetScore(gamestate);
-    printf("score %d", score);
     // Preparar el texto del puntaje
     char scoreText[20];
     sprintf(scoreText, "Score: %d", score); // Convierte el puntaje a cadena de texto

@@ -117,7 +117,6 @@ int main(int argc, char *argv[])
             }
         }
 
-        setSnakeLimits(&gameState, snake);
         SetSnakeLength(&gameState, 2);
         snakeFoodCollition(&gameState, snake, &food); // Verificar colisión con la comida
         snakeBodyCollition(&gameState, snake);        // Verificar colisión con el cuerpo
@@ -125,11 +124,12 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawMapBorders(renderer, gameState);    // Dibujar los bordes
         drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
 
-        drawFood(renderer, &food); // Dibujar la comida
-        // drawScore(renderer, gameState);
+        drawFood(renderer, &food);           // Dibujar la comida
+        drawMapBorders(renderer, gameState); // Dibujar los bordes
+        setSnakeLimits(&gameState, snake);
+        drawScore(renderer, &gameState);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(200);

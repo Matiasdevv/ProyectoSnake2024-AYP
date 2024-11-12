@@ -5,11 +5,6 @@
 #include "../settings/structs.h"
 #include "../settings/settings.h"
 
-SDL_Rect newSnakeHead(Segment *snake)
-{
-    // Detección de colisión entre la serpiente y la comida
-    SDL_Rect snakeHead = {snake[0].x, snake[0].y, snake[0].w, snake[0].h};
-}
 // Función para verificar colisión del cuerpo de la serpiente
 void snakeBodyCollition(GameState *gamestate, Segment *snake)
 {

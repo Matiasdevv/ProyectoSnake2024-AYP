@@ -15,7 +15,8 @@ void SetFoodPosition(int x, int y, Segment food)
 }
 void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
 {
-    SDL_Rect snakeHead = newSnakeHead(snake);
+    SDL_Rect snakeHead = {snake[0].x, snake[0].y, snake[0].w, snake[0].h};
+    ;
     SDL_Rect foodRect = newFoodRect(*food);
 
     if (SDL_HasIntersection(&snakeHead, &foodRect))
