@@ -28,7 +28,7 @@ typedef struct
 } GameState;
 
 extern SDL_Color textColor; // Color blanco
-extern SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft , *snakeTurnTextureUpRight , *snakeTurnTextureDownRight , *snakeTurnTextureDownLeft ;
+extern SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft, *snakeTurnTextureUpRight, *snakeTurnTextureDownRight, *snakeTurnTextureDownLeft;
 extern SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
 extern SDL_Event event;
 extern SDL_Texture *foodTexture;
@@ -41,8 +41,10 @@ void CloseFont(GameState *gameState);
 void LoadTextures(GameState *gamestate, SDL_Renderer *renderer);
 // Accesores y modificadores
 int GetScore(GameState *gameState);
+void UpdateScore(GameState *gameState);
 int GetMenuOption(GameState *gameState);
 int GetSnakeLength(GameState *gameState);
+void SetSnakeLength(GameState *gameState, int snakelen);
 int GetRunningStatus(GameState *gameState);
 void SetRunningStatus(GameState *gameState, int status);
 void SetMenuOption(GameState *gameState, int option);
@@ -61,16 +63,16 @@ int GetScreenWidth(GameState *gameState);
 int GetMaxSnakeLength(GameState *gameState);
 int GetMenuStatus(GameState *gameState);
 int SetMenuStatus(GameState *gameState, int status);
-SDL_Texture* getSnakeTextureUp();
-SDL_Texture* getSnakeTextureDown();
-SDL_Texture* getSnakeTextureLeft();
-SDL_Texture* getSnakeTextureRight();
-SDL_Texture* getSnakeTurnTextureUpLeft();
-SDL_Texture* getSnakeTurnTextureUpRight();
-SDL_Texture* getSnakeTurnTextureDownRight();
-SDL_Texture* getSnakeTurnTextureDownLeft();
-SDL_Texture* getSnakeBodyTextureHorizontal();
-SDL_Texture* getSnakeBodyTextureVertical();
-SDL_Texture* getFoodTexture();
+SDL_Texture *getSnakeTextureUp();
+SDL_Texture *getSnakeTextureDown();
+SDL_Texture *getSnakeTextureLeft();
+SDL_Texture *getSnakeTextureRight();
+SDL_Texture *getSnakeTurnTextureUpLeft();
+SDL_Texture *getSnakeTurnTextureUpRight();
+SDL_Texture *getSnakeTurnTextureDownRight();
+SDL_Texture *getSnakeTurnTextureDownLeft();
+SDL_Texture *getSnakeBodyTextureHorizontal();
+SDL_Texture *getSnakeBodyTextureVertical();
+SDL_Texture *getFoodTexture();
 SDL_Color getTextColor();
 #endif // GAME_H

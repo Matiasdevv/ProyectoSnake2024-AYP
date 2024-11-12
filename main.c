@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-        if (!window)
+    if (!window)
     {
         printf("Error al crear la ventana: %s\n", SDL_GetError());
         CloseFont(&gameState);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    while (GetRunningStatus(&gameState) && GetMenuStatus(&gameState) == 1)
+    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 1)
     {
         SDL_RenderClear(renderer);
         while (SDL_PollEvent(&event))
@@ -104,7 +104,8 @@ int main(int argc, char *argv[])
 
     LoadTextures(&gameState, renderer);
 
-    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0){
+    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0)
+    {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -117,17 +118,15 @@ int main(int argc, char *argv[])
             }
         }
 
-
-
         setSnakeLimits(&gameState, snake);
-
-        snakeFoodCollition(&gameState,snake, &food);                  // Verificar colisión con la comida
-        snakeBodyCollition(&gameState, snake); // Verificar colisión con el cuerpo
+        SetSnakeLength(&gameState, 2);
+        snakeFoodCollition(&gameState, snake, &food); // Verificar colisión con la comida
+        snakeBodyCollition(&gameState, snake);        // Verificar colisión con el cuerpo
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawMapBorders(renderer, gameState);               // Dibujar los bordes
+        drawMapBorders(renderer, gameState);    // Dibujar los bordes
         drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
         drawFood(&gameState, renderer, &food);  // Dibujar la comida
         drawScore(renderer, gameState);
@@ -135,7 +134,6 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(renderer);
         SDL_Delay(200);
     }
-
 
     // Limpiar recursos antes de salir
     CloseFont(&gameState);

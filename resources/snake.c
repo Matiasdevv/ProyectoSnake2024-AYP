@@ -37,7 +37,7 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
         if (GetSnakeVelY(gamestate) == 0)
         { // Solo puede ir hacia arriba si no está yendo hacia arriba o abajo
             SetSnakeVelX(gamestate, 0);
-            SetSnakeVelX(gamestate, -SEGMENT_SIZE);
+            SetSnakeVelY(gamestate, -SEGMENT_SIZE);
         }
         break;
     case SDLK_DOWN:
@@ -45,7 +45,7 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
         { // Solo puede ir hacia abajo si no está yendo hacia arriba o abajo
 
             SetSnakeVelX(gamestate, 0);
-            SetSnakeVelX(gamestate, SEGMENT_SIZE);
+            SetSnakeVelY(gamestate, SEGMENT_SIZE);
         }
         break;
     case SDLK_LEFT:
@@ -53,15 +53,14 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
         { // Solo puede ir hacia la izquierda si no está yendo hacia la izquierda o derecha
 
             SetSnakeVelX(gamestate, -SEGMENT_SIZE);
-            SetSnakeVelX(gamestate, 0);
+            SetSnakeVelY(gamestate, 0);
         }
         break;
     case SDLK_RIGHT:
         if (GetSnakeVelX(gamestate) == 0)
         { // Solo puede ir hacia la derecha si no está yendo hacia la izquierda o derecha
-
             SetSnakeVelX(gamestate, SEGMENT_SIZE);
-            SetSnakeVelX(gamestate, 0);
+            SetSnakeVelY(gamestate, 0);
         }
         break;
     }

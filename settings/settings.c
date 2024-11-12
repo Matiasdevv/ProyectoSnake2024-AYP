@@ -25,7 +25,7 @@ void InitGameState(GameState *gameState)
 
 // Definición de las variables globales
 SDL_Color textColor = {255, 255, 255}; // Color blanco
-SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft , *snakeTurnTextureUpRight , *snakeTurnTextureDownRight , *snakeTurnTextureDownLeft ;
+SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft, *snakeTurnTextureUpRight, *snakeTurnTextureDownRight, *snakeTurnTextureDownLeft;
 SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
 SDL_Event event;
 SDL_Texture *foodTexture;
@@ -59,6 +59,10 @@ int GetScore(GameState *gameState)
 {
     return gameState->score;
 }
+void UpdateScore(GameState *gameState)
+{
+    gameState->score++;
+}
 
 int GetMenuOption(GameState *gameState)
 {
@@ -68,6 +72,10 @@ int GetMenuOption(GameState *gameState)
 int GetSnakeLength(GameState *gameState)
 {
     return gameState->snakeLength;
+}
+void SetSnakeLength(GameState *gameState, int snakelen)
+{
+    gameState->snakeLength = snakelen;
 }
 int GetBorderWidth(GameState *gameState)
 {
@@ -85,7 +93,6 @@ void SetRunningStatus(GameState *gameState, int status)
 }
 void SetMenuOption(GameState *gameState, int option)
 {
-    printf("cambiando %d", option);
     gameState->menuOption = option;
 }
 
@@ -131,7 +138,7 @@ int GetMenuStatus(GameState *gameState)
 }
 int SetMenuStatus(GameState *gameState, int status)
 {
-     gameState->onMenu = status;
+    gameState->onMenu = status;
 }
 
 void setSnakeLimits(GameState *gamestate, Segment *snake)
@@ -158,122 +165,139 @@ void setSnakeLimits(GameState *gamestate, Segment *snake)
     }
 }
 // Getters para las texturas
-SDL_Texture* getSnakeTextureUp() {
+SDL_Texture *getSnakeTextureUp()
+{
     return snakeTextureUp;
 }
 
-SDL_Texture* getSnakeTextureDown() {
+SDL_Texture *getSnakeTextureDown()
+{
     return snakeTextureDown;
 }
 
-SDL_Texture* getSnakeTextureLeft() {
+SDL_Texture *getSnakeTextureLeft()
+{
     return snakeTextureLeft;
 }
 
-SDL_Texture* getSnakeTextureRight() {
+SDL_Texture *getSnakeTextureRight()
+{
     return snakeTextureRight;
 }
 
-SDL_Texture* getSnakeTurnTextureUpLeft() {
+SDL_Texture *getSnakeTurnTextureUpLeft()
+{
     return snakeTurnTextureUpLeft;
 }
 
-SDL_Texture* getSnakeTurnTextureUpRight() {
+SDL_Texture *getSnakeTurnTextureUpRight()
+{
     return snakeTurnTextureUpRight;
 }
 
-SDL_Texture* getSnakeTurnTextureDownRight() {
+SDL_Texture *getSnakeTurnTextureDownRight()
+{
     return snakeTurnTextureDownRight;
 }
 
-SDL_Texture* getSnakeTurnTextureDownLeft() {
+SDL_Texture *getSnakeTurnTextureDownLeft()
+{
     return snakeTurnTextureDownLeft;
 }
 
-SDL_Texture* getSnakeBodyTextureHorizontal() {
+SDL_Texture *getSnakeBodyTextureHorizontal()
+{
     return snakeBodyTextureHorizontal;
 }
 
-SDL_Texture* getSnakeBodyTextureVertical() {
+SDL_Texture *getSnakeBodyTextureVertical()
+{
     return snakeBodyTextureVertical;
 }
 
-SDL_Texture* getFoodTexture() {
+SDL_Texture *getFoodTexture()
+{
     return foodTexture;
 }
 
 // Getter para el color del texto
-SDL_Color getTextColor() {
+SDL_Color getTextColor()
+{
     return textColor;
 }
 
-
-
-void LoadTextures(GameState *gamestate, SDL_Renderer *renderer){
+void LoadTextures(GameState *gamestate, SDL_Renderer *renderer)
+{
     snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_up.bmp"));
-    if (!snakeTextureUp) {
+    if (!snakeTextureUp)
+    {
         printf("Error al cargar la textura snake_head_up: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
     snakeTextureDown = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_down.bmp"));
-    if (!snakeTextureDown) {
+    if (!snakeTextureDown)
+    {
         printf("Error al cargar la textura snake_head_down: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
     snakeTextureLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_left.bmp"));
-    if (!snakeTextureLeft) {
+    if (!snakeTextureLeft)
+    {
         printf("Error al cargar la textura snake_head_left: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
     snakeTextureRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_right.bmp"));
-    if (!snakeTextureRight) {
+    if (!snakeTextureRight)
+    {
         printf("Error al cargar la textura snake_head_right: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
     snakeBodyTextureHorizontal = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_body_horizontal.bmp"));
-    if (!snakeBodyTextureHorizontal) {
+    if (!snakeBodyTextureHorizontal)
+    {
         printf("Error al cargar la textura snake_body_horizontal: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
     snakeBodyTextureVertical = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_body_vertical.bmp"));
-    if (!snakeBodyTextureVertical) {
+    if (!snakeBodyTextureVertical)
+    {
         printf("Error al cargar la textura snake_body_vertical: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
 
-// snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
-// if (!snakeTurnTextureUpLeft) {
-//     printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
-//     SetRunningStatus(gamestate,0);
-// }
+    // snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
+    // if (!snakeTurnTextureUpLeft) {
+    //     printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
+    //     SetRunningStatus(gamestate,0);
+    // }
 
-// snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
-// if (!snakeTurnTextureUpRight) {
-//     printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
-//     SetRunningStatus(gamestate,0);
-// }
+    // snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
+    // if (!snakeTurnTextureUpRight) {
+    //     printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
+    //     SetRunningStatus(gamestate,0);
+    // }
 
-// snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
-// if (!snakeTurnTextureDownRight) {
-//     printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
-//     SetRunningStatus(gamestate,0);
-// }
+    // snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
+    // if (!snakeTurnTextureDownRight) {
+    //     printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
+    //     SetRunningStatus(gamestate,0);
+    // }
 
-// snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
-// if (!snakeTurnTextureDownLeft) {
-//     printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
-//     SetRunningStatus(gamestate,0);
-// }
+    // snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
+    // if (!snakeTurnTextureDownLeft) {
+    //     printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
+    //     SetRunningStatus(gamestate,0);
+    // }
 
     foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/food_sprite.bmp"));
-    if (!foodTexture) {
+    if (!foodTexture)
+    {
         printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
-        SetRunningStatus(gamestate,0);
+        SetRunningStatus(gamestate, 0);
     }
-
 }

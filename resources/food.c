@@ -8,7 +8,7 @@ SDL_Rect newFoodRect(Segment food)
     SDL_Rect foodRect = {food.x, food.y, food.w, food.h};
 }
 
-void setFoodPosition(int x, int y, Segment food)
+void SetFoodPosition(int x, int y, Segment food)
 {
     food.x = x;
     food.y = y;
@@ -40,17 +40,17 @@ void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
             }
         }
 
-        setFoodPosition(random_number, random_number2, *food);
-        // SetSnakeLength(GetSnakeLength(gamestate) + 1);
-        // SetScore(GetScore(gamestate) + 1); // Aumenta el puntaje cuando come comida
+        SetFoodPosition(random_number, random_number2, *food);
+        SetSnakeLength(gamestate, GetSnakeLength(gamestate) + 1);
+        UpdateScore(gamestate);
     }
 }
 
 void drawFood(SDL_Renderer *renderer, Segment food)
 {
     SDL_Rect foodRect = {food.x, food.y, food.w, food.h};
-    SDL_Texture* foodTexture = getFoodTexture();
-    SDL_RenderCopy(renderer, foodTexture , NULL, &foodRect);
+    SDL_Texture *foodTexture = getFoodTexture();
+    SDL_RenderCopy(renderer, foodTexture, NULL, &foodRect);
 }
 
 Segment initializeFood(GameState *gamestate)

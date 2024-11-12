@@ -6,7 +6,7 @@
 
 void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food);
 SDL_Rect newFoodRect(Segment food);
-void setFoodPosition(int x, int y, Segment food);
+void SetFoodPosition(int x, int y, Segment food);
 void drawFood(GameState *gamestate, SDL_Renderer *renderer, Segment *food);
 
 Segment initializeFood(GameState *gamestate);
