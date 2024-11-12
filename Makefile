@@ -1,24 +1,28 @@
+# Variables
 CC = gcc
-CFLAGS = -lSDL2 -lSDL2_ttf $(shell pkg-config --cflags --libs sdl2)
-
-SRC = main.c \
-      resources/colliders/snake.c \
-      resources/colliders/food.c \
-      resources/events/score/score.c \
-      resources/colliders/sdl.c \
-      resources/events/map/map.c \
-      resources/events/menu/menu.c
-
+CFLAGS = -Wall -g
+LDFLAGS = -lSDL2 -lSDL2_ttf
+SRC = main.c resources/snake.c resources/food.c ui/score.c ui/map.c ui/draw.c ui/menu.c settings/settings.c
 OBJ = $(SRC:.c=.o)
-TARGET = main
+EXEC = main
 
-all: $(TARGET)
+# Regla principal: compilar y enlazar
+all: $(EXEC)
 
-$(TARGET): $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+# Compilar los archivos .c a .o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
+# Enlazar los objetos .o para crear el ejecutable
+$(EXEC): $(OBJ)
+	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
+
+# Limpiar archivos generados
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(EXEC)
 
+# Reglas adicionales
 
-# gcc -o main main.c     resources/snake.c     resources/food.c     ui/score.c    ui/sdl.c  ui/map.c     ui/menu.c     -lSDL2 -lSDL2_ttf $(pkg-config --cflags --libs sdl2)
+# Recompilar todo desde cero
+rebuild: clean all
+
