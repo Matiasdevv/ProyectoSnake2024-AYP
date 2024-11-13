@@ -270,29 +270,29 @@ void LoadTextures(GameState *gamestate, SDL_Renderer *renderer)
         SetRunningStatus(gamestate, 0);
     }
 
-    // snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
-    // if (!snakeTurnTextureUpLeft) {
-    //     printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
-    //     SetRunningStatus(gamestate,0);
-    // }
+     snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
+     if (!snakeTurnTextureUpLeft) {
+         printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
+         SetRunningStatus(gamestate,0);
+     }
 
-    // snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
-    // if (!snakeTurnTextureUpRight) {
-    //     printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
-    //     SetRunningStatus(gamestate,0);
-    // }
+     snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
+     if (!snakeTurnTextureUpRight) {
+         printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
+         SetRunningStatus(gamestate,0);
+     }
 
-    // snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
-    // if (!snakeTurnTextureDownRight) {
-    //     printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
-    //     SetRunningStatus(gamestate,0);
-    // }
+     snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
+     if (!snakeTurnTextureDownRight) {
+         printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
+         SetRunningStatus(gamestate,0);
+     }
 
-    // snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
-    // if (!snakeTurnTextureDownLeft) {
-    //     printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
-    //     SetRunningStatus(gamestate,0);
-    // }
+     snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
+     if (!snakeTurnTextureDownLeft) {
+         printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
+         SetRunningStatus(gamestate,0);
+     }
 
     foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/food_sprite.bmp"));
     if (!foodTexture)

@@ -37,15 +37,27 @@ void drawSnake(SDL_Renderer *renderer, Segment *snake, GameState *gamestate)
                 SDL_RenderCopy(renderer, getSnakeTextureRight(), NULL, &rect);
             }
         }
-        else
-        { // Renderizar el cuerpo
-            if (snake[i].x == snake[i - 1].x)
-            { // Movimiento vertical
-                SDL_RenderCopy(renderer, getSnakeBodyTextureVertical(), NULL, &rect);
-            }
-            else
-            { // Movimiento horizontal
-                SDL_RenderCopy(renderer, getSnakeBodyTextureHorizontal(), NULL, &rect);
+        else{
+         // Detección de giro comparando la posición del segmento actual con el anterior y el siguiente
+            int prevX = snake[i - 1].x, prevY = snake[i - 1].y;
+            int nextX = (i < snakeLength - 1) ? snake[i + 1].x : snake[i].x;
+            int nextY = (i < snakeLength - 1) ? snake[i + 1].y : snake[i].y;
+
+            // Determinar el tipo de giro
+            if (prevY < snake[i].y && nextX > snake[i].x || nextY < snake[i].y && prevX > snake[i].x) {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureDownRight(), NULL, &rect);
+            } else if (prevY < snake[i].y && nextX < snake[i].x || nextY < snake[i].y && prevX < snake[i].x) {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureDownLeft(), NULL, &rect);
+            } else if (prevY > snake[i].y && nextX > snake[i].x || nextY > snake[i].y && prevX > snake[i].x) {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureUpRight(), NULL, &rect);
+            } else if (prevY > snake[i].y && nextX < snake[i].x || nextY > snake[i].y && prevX < snake[i].x) {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureUpLeft(), NULL, &rect);
+            } else {
+                if (snake[i].x == snake[i - 1].x) {
+                    SDL_RenderCopy(renderer, snakeBodyTextureVertical, NULL, &rect);
+                } else {
+                    SDL_RenderCopy(renderer, snakeBodyTextureHorizontal, NULL, &rect);
+                }
             }
         }
     }
