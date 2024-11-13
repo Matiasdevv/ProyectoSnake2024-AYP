@@ -5,10 +5,10 @@
 #include "settings/settings.h"
 #include "settings/structs.h"
 #include "resources/food.h"
-#include "ui/menu.h"
 #include "ui/map.h"
-#include "ui/draw.h"
 #include "ui/score.h"
+#include "ui/menu.h"
+#include "ui/draw.h"
 #include "resources/snake.h"
 
 int fileExists(const char *filename)
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     // Declarar e inicializar el estado del juego
     GameState gameState;
-    InitGameState(&gameState);
+            InitGameState(&gameState);
 
     // Cargar la fuente
     if (!GetFont(&gameState))
@@ -55,8 +55,8 @@ int main(int argc, char *argv[])
         "Snake Game",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        gameState.screenWidth,
-        gameState.screenHeight,
+        GetScreenWidth(&gameState),
+        GetScreenHeight(&gameState),
         SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -77,79 +77,37 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 1)
-    {
-        SDL_RenderClear(renderer);
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
-                SetMenuOption(&gameState, 0);
-                SetRunningStatus(&gameState, 0);
-            }
-            else if (event.type == SDL_KEYDOWN)
-            {
-                handleMenuInput(event, &gameState); // Manejar la entrada del menú
-            }
-        }
-
-        drawMenu(renderer, &gameState); // Dibujar el menú
-
-        SDL_RenderPresent(renderer);
-        SDL_Delay(100);
-    }
-
     LoadTextures(&gameState, renderer);
-    // Aquí empieza el juego después de que se sale del menú
-    Segment *snake = initializeSnake(&gameState);
-    Segment food = (Segment)initializeFood(&gameState);
-    while (GetRunningStatus(&gameState) == 1 && GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0)
-    {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
+
+
+while (GetRunningStatus(&gameState) != 0 ) {
+        // Manejo de eventos
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
                 SetRunningStatus(&gameState, 0);
-            }
-            if (event.type == SDL_KEYDOWN)
-            {
-                snakeMovement(event, &gameState);
             }
         }
 
-        SetSnakeLength(&gameState, 2);
-        snakeFoodCollition(&gameState, snake, &food); // Verificar colisión con la comida
-        snakeBodyCollition(&gameState, snake);        // Verificar colisión con el cuerpo
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        // Limpiar pantalla
         SDL_RenderClear(renderer);
 
-        drawSnake(renderer, snake, &gameState); // Dibujar la serpiente
+        // Verificar el estado del menú
+        if (GetMenuStatus(&gameState) == 1) {
+            // Mostrar el menú
+            showMenu(event, &gameState, renderer, window);
+        } else if (GetMenuStatus(&gameState) == 0) {
+            // Mostrar el juego principal
+            // Aquí empieza el juego después de que se sale del menú
+            Segment *snake = initializeSnake(&gameState);
+            Segment *food = initializeFood(&gameState);
+            initializeMainGame(event, &gameState, renderer, food, snake);
+        }
 
-        drawFood(renderer, &food);           // Dibujar la comida
-        drawMapBorders(renderer, gameState); // Dibujar los bordes
-        setSnakeLimits(&gameState, snake);
-        drawScore(renderer, &gameState);
-
+        // Actualizar la pantalla
         SDL_RenderPresent(renderer);
-        SDL_Delay(200);
     }
 
-    // Limpiar recursos antes de salir
-    CloseFont(&gameState);
-    SDL_DestroyTexture(snakeTextureUp);
-    SDL_DestroyTexture(snakeTextureDown);
-    SDL_DestroyTexture(snakeTextureLeft);
-    SDL_DestroyTexture(snakeTextureRight);
-    SDL_DestroyTexture(snakeBodyTextureHorizontal);
-    SDL_DestroyTexture(snakeBodyTextureVertical);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    SDL_Quit();
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    SDL_Quit();
+
 
     return 0;
 }

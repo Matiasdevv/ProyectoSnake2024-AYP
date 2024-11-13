@@ -8,13 +8,13 @@
 #include <time.h>
 #include <SDL2/SDL_ttf.h>
 
-void drawMapBorders(SDL_Renderer *renderer, GameState gamestate)
+void drawMapBorders(SDL_Renderer *renderer, GameState *gamestate)
 {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Color verde
-    int SCREEN_WIDTH = GetScreenWidth(&gamestate);
-    int SCREEN_HEIGHT = GetScreenHeight(&gamestate);
-    int BORDER_WIDTH = GetBorderWidth(&gamestate);
-    int SEGMENT_SIZE = GetSegmentSize(&gamestate);
+    int SCREEN_WIDTH = GetScreenWidth(gamestate);
+    int SCREEN_HEIGHT = GetScreenHeight(gamestate);
+    int BORDER_WIDTH = GetBorderWidth(gamestate);
+    int SEGMENT_SIZE = GetSegmentSize(gamestate);
     // Borde superior
     SDL_Rect topBorder = {0, 0, SCREEN_WIDTH, BORDER_WIDTH};
     SDL_RenderFillRect(renderer, &topBorder);

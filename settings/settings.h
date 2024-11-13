@@ -49,7 +49,7 @@ int GetRunningStatus(GameState *gameState);
 void SetRunningStatus(GameState *gameState, int status);
 void SetMenuOption(GameState *gameState, int option);
 void setSnakeLimits(GameState *gamestate, Segment *snake);
-
+void exitGame(GameState *gameState, SDL_Renderer *renderer,SDL_Window *window);
 int GetSnakeVelY(GameState *gameState);
 void SetSnakeVelY(GameState *gameState, int velY);
 int GetSnakeVelX(GameState *gameState);

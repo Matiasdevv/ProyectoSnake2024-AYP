@@ -75,7 +75,7 @@ int GetSnakeLength(GameState *gameState)
 }
 void SetSnakeLength(GameState *gameState, int snakelen)
 {
-    gameState->snakeLength = snakelen;
+    gameState->snakeLength += snakelen;
 }
 int GetBorderWidth(GameState *gameState)
 {
@@ -226,6 +226,21 @@ SDL_Color getTextColor()
     return textColor;
 }
 
+
+void exitGame(GameState *gameState, SDL_Renderer *renderer,SDL_Window *window){
+    // Limpiar recursos antes de salir
+    CloseFont(gameState);
+    SDL_DestroyTexture(getSnakeTextureUp());
+    SDL_DestroyTexture(getSnakeTextureDown());
+    SDL_DestroyTexture(getSnakeTextureLeft());
+    SDL_DestroyTexture(getSnakeTextureRight());
+    SDL_DestroyTexture(getSnakeBodyTextureHorizontal());
+    SDL_DestroyTexture(getSnakeBodyTextureVertical());
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_Quit();
+    SDL_Quit();
+}
 void LoadTextures(GameState *gamestate, SDL_Renderer *renderer)
 {
     snakeTextureUp = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/snake_head_up.bmp"));

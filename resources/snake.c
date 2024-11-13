@@ -4,6 +4,11 @@
 #include <time.h>
 #include "../settings/structs.h"
 #include "../settings/settings.h"
+#include "food.h"
+#include "../ui/map.h"
+#include "../ui/score.h"
+#include "../ui/draw.h"
+
 
 // Función para verificar colisión del cuerpo de la serpiente
 void snakeBodyCollition(GameState *gamestate, Segment *snake)
@@ -18,7 +23,9 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake)
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
-            SetRunningStatus(gamestate, 0);
+            SetMenuStatus(gamestate,1);
+            SetMenuOption(gamestate,0);
+            InitGameState(gamestate);
         }
     }
 }
@@ -79,10 +86,39 @@ Segment *initializeSnake(GameState *gamsetate)
     snake[0].w = SEGMENT_SIZE;
     snake[0].h = SEGMENT_SIZE;
 
-    // Inicializa el segundo segmento justo detrás
-    snake[1].x = snake[0].x - SEGMENT_SIZE;
-    snake[1].y = snake[0].y;
-    snake[1].w = SEGMENT_SIZE;
-    snake[1].h = SEGMENT_SIZE;
     return snake;
+}
+
+
+void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake ){
+
+    while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 0 && GetMenuOption(gameState) == 0)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                SetRunningStatus(gameState, 0);
+            }
+            if (event.type == SDL_KEYDOWN)
+            {
+                snakeMovement(event, gameState);
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        snakeFoodCollition(gameState, snake, food); // Verificar colisión con la comida
+        snakeBodyCollition(gameState, snake);        // Verificar colisión con el cuerpo
+
+        drawFood(renderer, food);           // Dibujar la comida
+        drawSnake(renderer, snake, gameState); // Dibujar la serpiente
+
+        drawMapBorders(renderer,gameState); // Dibujar los bordes
+        drawScore(renderer, gameState);
+        setSnakeLimits(gameState, snake);
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(200);
+    }
 }
