@@ -16,9 +16,9 @@ void InitGameState(GameState *gameState)
     gameState->menuOption = 0;
     gameState->onMenu = 1;
     gameState->score = 0;
-    gameState->snakeLength = 0;
+    gameState->snakeLength = 2;
     gameState->running = 1;
-    gameState->velX = 0;
+    gameState->velX = 40;
     gameState->velY = 0;
     gameState->font = NULL;
 }
