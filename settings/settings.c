@@ -11,7 +11,7 @@ void InitGameState(GameState *gameState)
     gameState->screenHeight = 720;
     gameState->segmentSize = 40;
     gameState->borderWidth = 40;
-    gameState->maxSnakeLength = 100;
+    gameState->maxSnakeLength = 300;
 
     gameState->menuOption = 0;
     gameState->onMenu = 1;

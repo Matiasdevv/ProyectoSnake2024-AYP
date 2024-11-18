@@ -11,37 +11,45 @@ void SetFoodPosition(int x, int y, Segment *food)
 }
 void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
 {
-    
     SDL_Rect snakeHead = {snake[0].x, snake[0].y, snake[0].w, snake[0].h};
     SDL_Rect foodRect = {food->x, food->y, food->w, food->h};
 
     if (SDL_HasIntersection(&snakeHead, &foodRect))
     {
-        int random_number = (rand() % 31) * GetSegmentSize(gamestate); // generar número aleatorio dentro de la cuadrícula
-        int random_number2 = (rand() % 17) * GetSegmentSize(gamestate);
+        int randomX, randomY;
+        int isPositionValid;
 
-        if (random_number == 0)
+        do
         {
-            while (random_number == 0)
-            {
-                random_number = (rand() % 31) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
-            }
-        }
+            isPositionValid = 1; // Supongamos que la posición es válida
 
-        // Verificar que el número no sea 0 para random_number2
-        if (random_number2 == 0)
-        {
-            while (random_number2 == 0)
+            // Generar coordenadas aleatorias dentro de la cuadrícula
+            randomX = (rand() % 31) * GetSegmentSize(gamestate);
+            randomY = (rand() % 17) * GetSegmentSize(gamestate);
+            
+              if (randomX == 0 || randomY == 0)
             {
-                random_number2 = (rand() % 17) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
+                isPositionValid = 0; // Marcar como inválido
+                continue;
             }
-        }
 
-        SetFoodPosition(random_number, random_number2, food);
+            // Verificar que no coincidan con ningún segmento de la serpiente
+            for (int i = 0; i < GetSnakeLength(gamestate); i++)
+            {
+                if (snake[i].x == randomX && snake[i].y == randomY)
+                {
+                    isPositionValid = 0; // La posición no es válida
+                    break;
+                }
+            }
+        } while (isPositionValid == 0);
+
+        SetFoodPosition(randomX, randomY, food);
         SetSnakeLength(gamestate, 1);
         UpdateScore(gamestate);
     }
 }
+
 
 void drawFood(SDL_Renderer *renderer, Segment food)
 {
