@@ -100,7 +100,7 @@ while (GetRunningStatus(&gameState) != 0 ) {
             // Aquí empieza el juego después de que se sale del menú
             Segment *snake = initializeSnake(&gameState);
             Segment *food = initializeFood(&gameState);
-            initializeMainGame(event, &gameState, renderer, food, snake);
+            initializeMainGame(event, &gameState,renderer , snake, food);
         }
 
         // Actualizar la pantalla

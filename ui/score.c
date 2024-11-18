@@ -45,3 +45,79 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
 }
+
+
+
+// Función para capturar el nombre
+void EnterName (SDL_Renderer *renderer, char name[], int maxLen, GameState *gamestate)  {
+    SDL_Event event;
+    int done = 0;
+    int index = 0;
+
+    SDL_Color textColor = {255, 255, 255, 255}; // Color blanco
+    SDL_Rect textRect = {100, 200, 600, 100};  // Posición y tamaño del texto
+
+    while (!done) {
+        // Limpiar la pantalla
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro
+        SDL_RenderClear(renderer);
+
+        // Renderizar el texto ingresado
+        SDL_Surface *textSurface = TTF_RenderText_Blended(GetFont(gamestate), name, textColor);
+        if (textSurface) {
+            SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+            if (textTexture) {
+                textRect.w = textSurface->w; // Ajustar ancho al texto
+                textRect.h = textSurface->h; // Ajustar alto al texto
+                SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+                SDL_DestroyTexture(textTexture);
+            }
+            SDL_FreeSurface(textSurface);
+        }
+
+        SDL_RenderPresent(renderer);
+
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                done = 1; // Salir si se cierra la ventana
+            } else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_RETURN) {
+                    done = 1; // Salir cuando presionan Enter
+                } else if (event.key.keysym.sym == SDLK_BACKSPACE && index > 0) {
+                    name[--index] = '\0'; // Eliminar último caracter
+                } else if (index < maxLen - 1) {
+                    char key = event.key.keysym.sym;
+                    if (key >= 32 && key <= 126) { // Solo caracteres imprimibles
+                        name[index++] = key;
+                        name[index] = '\0';
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+void SavePlayerData(char *filename, int score, char name[]) {
+    FILE *file = fopen(filename, "a"); // Abre el archivo en modo agregar
+    if (file) {
+        fprintf(file, "%s,%d\n", name, score);
+        fclose(file);
+    } else {
+        printf("Error: No se pudo guardar el puntaje.\n");
+    }
+}
+
+void SaveScore(GameState *gamestate,SDL_Renderer *renderer) {
+    char playerName[50];
+    
+    // Obtén el puntaje actual
+    int score = GetScore(gamestate);
+
+    // Captura el nombre del usuario
+    EnterName(renderer, playerName, sizeof(playerName)/ playerName[0]-1, gamestate);
+    
+
+    // Guardar en un archivo
+    SavePlayerData("data/scores.txt",score,playerName);
+}
