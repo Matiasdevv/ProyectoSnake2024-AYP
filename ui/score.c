@@ -140,7 +140,7 @@ void SavePlayerData(char *filename, int score, char name[])
     FILE *file = fopen(filename, "a"); // Abre el archivo en modo agregar
     if (file)
     {
-        fprintf(file, "%s,%d\n", name, score);
+        fprintf(file, "%s %d NORMAL\n", name, score);
         fclose(file);
     }
     else
