@@ -98,9 +98,10 @@ while (GetRunningStatus(&gameState) != 0 ) {
         } else if (GetMenuStatus(&gameState) == 0) {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
+            
             Segment *snake = initializeSnake(&gameState);
             Segment *food = initializeFood(&gameState);
-            initializeMainGame(event, &gameState,renderer , snake, food);
+            initializeMainGame(event, &gameState, renderer , snake, food );
         }
 
         // Actualizar la pantalla

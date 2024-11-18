@@ -49,34 +49,58 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 
 
 // Función para capturar el nombre
-void EnterName (SDL_Renderer *renderer, char name[], int maxLen, GameState *gamestate)  {
+void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate) {
+    int SCREEN_WIDTH = GetScreenWidth(gamestate);   // Obtener anchura de la pantalla
+    int SCREEN_HEIGHT = GetScreenHeight(gamestate); // Obtener altura de la pantalla
+    int maxLen = 50;
+
     SDL_Event event;
     int done = 0;
     int index = 0;
 
     SDL_Color textColor = {255, 255, 255, 255}; // Color blanco
-    SDL_Rect textRect = {100, 200, 600, 100};  // Posición y tamaño del texto
+    SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100}; // Posición del texto ingresado
+
+    // Variable para el texto del título
+    char title[50] = "Por favor, ingrese su nombre"; // Texto para la parte superior de la pantalla
+
+    // Posición del texto superior
+    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50}; // Ancho y alto iniciales
 
     while (!done) {
         // Limpiar la pantalla
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro
         SDL_RenderClear(renderer);
 
-        // Renderizar el texto ingresado
-        SDL_Surface *textSurface = TTF_RenderText_Blended(GetFont(gamestate), name, textColor);
-        if (textSurface) {
-            SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-            if (textTexture) {
-                textRect.w = textSurface->w; // Ajustar ancho al texto
-                textRect.h = textSurface->h; // Ajustar alto al texto
-                SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-                SDL_DestroyTexture(textTexture);
+        // Renderizar el texto superior
+        SDL_Surface *titleSurface = TTF_RenderText_Blended(GetFont(gamestate), title, textColor);
+        if (titleSurface) {
+            SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+            if (titleTexture) {
+                titleRect.w = titleSurface->w; // Ajustar ancho al texto
+                titleRect.h = titleSurface->h; // Ajustar alto al texto
+                SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+                SDL_DestroyTexture(titleTexture);
             }
-            SDL_FreeSurface(textSurface);
+            SDL_FreeSurface(titleSurface);
+        }
+
+        // Renderizar el texto ingresado
+        SDL_Surface *inputSurface = TTF_RenderText_Blended(GetFont(gamestate), name, textColor);
+        if (inputSurface) {
+            SDL_Texture *inputTexture = SDL_CreateTextureFromSurface(renderer, inputSurface);
+            if (inputTexture) {
+                inputRect.w = inputSurface->w; // Ajustar ancho al texto
+                inputRect.h = inputSurface->h; // Ajustar alto al texto
+                SDL_RenderCopy(renderer, inputTexture, NULL, &inputRect);
+                SDL_DestroyTexture(inputTexture);
+            }
+            SDL_FreeSurface(inputSurface);
         }
 
         SDL_RenderPresent(renderer);
 
+        // Manejar eventos
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 done = 1; // Salir si se cierra la ventana
@@ -95,8 +119,9 @@ void EnterName (SDL_Renderer *renderer, char name[], int maxLen, GameState *game
             }
         }
     }
-
 }
+
+
 
 void SavePlayerData(char *filename, int score, char name[]) {
     FILE *file = fopen(filename, "a"); // Abre el archivo en modo agregar
@@ -109,13 +134,14 @@ void SavePlayerData(char *filename, int score, char name[]) {
 }
 
 void SaveScore(GameState *gamestate,SDL_Renderer *renderer) {
+     
     char playerName[50];
     
     // Obtén el puntaje actual
     int score = GetScore(gamestate);
 
     // Captura el nombre del usuario
-    EnterName(renderer, playerName, sizeof(playerName)/ playerName[0]-1, gamestate);
+    EnterName(renderer, playerName, gamestate);
     
 
     // Guardar en un archivo
