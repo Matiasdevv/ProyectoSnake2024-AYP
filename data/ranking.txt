@@ -1,2 +1,3 @@
-Jugador: , Puntaje: 0
-Jugador: , Puntaje: 0
+Bob 1200 Facil
+JohnDoe 1000 Medio
+Alice 800 Dificil

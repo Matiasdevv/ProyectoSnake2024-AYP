@@ -7,4 +7,11 @@ typedef struct
     int x, y, w, h;
 } Segment;
 
+typedef struct
+{
+    char name[10];
+    int score;
+    char difficulty[10];
+} Player;
+
 #endif

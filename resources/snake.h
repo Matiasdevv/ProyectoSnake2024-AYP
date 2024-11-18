@@ -5,6 +5,6 @@
 
 Segment *initializeSnake(GameState *gameState);
 void snakeMovement(SDL_Event event, GameState *gameState);
-void snakeBodyCollition(GameState *gamestate, Segment *snake,SDL_Renderer *renderer);
-void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer,Segment *food, Segment *snake );
+void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *renderer);
+void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake);
 #endif

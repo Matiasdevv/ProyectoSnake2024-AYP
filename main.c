@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     // Declarar e inicializar el estado del juego
     GameState gameState;
-            InitGameState(&gameState);
+    InitGameState(&gameState);
 
     // Cargar la fuente
     if (!GetFont(&gameState))
@@ -79,11 +79,13 @@ int main(int argc, char *argv[])
 
     LoadTextures(&gameState, renderer);
 
-
-while (GetRunningStatus(&gameState) != 0 ) {
+    while (GetRunningStatus(&gameState) != 0)
+    {
         // Manejo de eventos
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 SetRunningStatus(&gameState, 0);
             }
         }
@@ -92,23 +94,27 @@ while (GetRunningStatus(&gameState) != 0 ) {
         SDL_RenderClear(renderer);
 
         // Verificar el estado del menú
-        if (GetMenuStatus(&gameState) == 1) {
+        if (GetMenuStatus(&gameState) == 1)
+        {
             // Mostrar el menú
             showMenu(event, &gameState, renderer, window);
-        } else if (GetMenuStatus(&gameState) == 0) {
+        }
+        if (GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 0)
+        {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
-            
             Segment *snake = initializeSnake(&gameState);
             Segment *food = initializeFood(&gameState);
-            initializeMainGame(event, &gameState, renderer , snake, food );
+            initializeMainGame(event, &gameState, renderer, food, snake);
+        }
+        if (GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 1)
+        {
+            drawRanking(renderer, &gameState);
         }
 
         // Actualizar la pantalla
         SDL_RenderPresent(renderer);
     }
-
-
 
     return 0;
 }
