@@ -9,7 +9,6 @@
 #include "../ui/score.h"
 #include "../ui/draw.h"
 
-
 // Función para verificar colisión del cuerpo de la serpiente
 void snakeBodyCollition(GameState *gamestate, Segment *snake)
 {
@@ -23,8 +22,8 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake)
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
-            SetMenuStatus(gamestate,1);
-            SetMenuOption(gamestate,0);
+            SetMenuStatus(gamestate, 1);
+            SetMenuOption(gamestate, 0);
             InitGameState(gamestate);
         }
     }
@@ -89,8 +88,8 @@ Segment *initializeSnake(GameState *gamsetate)
     return snake;
 }
 
-
-void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake ){
+void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake)
+{
 
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 0 && GetMenuOption(gameState) == 0)
     {
@@ -109,12 +108,12 @@ void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *ren
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         snakeFoodCollition(gameState, snake, food); // Verificar colisión con la comida
-        snakeBodyCollition(gameState, snake);        // Verificar colisión con el cuerpo
+        snakeBodyCollition(gameState, snake);       // Verificar colisión con el cuerpo
 
-        drawFood(renderer, food);           // Dibujar la comida
+        drawFood(renderer, *food);             // Dibujar la comida
         drawSnake(renderer, snake, gameState); // Dibujar la serpiente
 
-        drawMapBorders(renderer,gameState); // Dibujar los bordes
+        drawMapBorders(renderer, gameState); // Dibujar los bordes
         drawScore(renderer, gameState);
         setSnakeLimits(gameState, snake);
 
