@@ -39,7 +39,6 @@ void drawSnake(SDL_Renderer *renderer, Segment *snake, GameState *gamestate)
         }
         else
         {
-            // Detección de giro comparando la posición del segmento actual con el anterior y el siguiente
             int prevX = snake[i - 1].x, prevY = snake[i - 1].y;
             int nextX = (i < snakeLength - 1) ? snake[i + 1].x : snake[i].x;
             int nextY = (i < snakeLength - 1) ? snake[i + 1].y : snake[i].y;
