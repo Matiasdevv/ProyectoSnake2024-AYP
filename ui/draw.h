@@ -6,4 +6,5 @@
 #include "../settings/settings.h"
 
 void drawSnake(SDL_Renderer *renderer, Segment *snake, GameState *gamestate);
+void drawRanking(SDL_Renderer *renderer, GameState *gameState);
 #endif
