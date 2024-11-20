@@ -82,7 +82,7 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
     int BORDER_WIDTH = GetBorderWidth(gameState);   // Obtener el ancho del borde
     int SEGMENT_SIZE = GetSegmentSize(gameState);   // Obtener el tamaño del segmento
 
-    FILE *file = fopen("data/ranking.txt", "r"); // Abrir el archivo en modo de lectura
+    FILE *file = fopen("data/scores.txt", "r"); // Abrir el archivo en modo de lectura
 
     // Verificar si el archivo se abrió correctamente
     if (file == NULL)

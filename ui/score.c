@@ -6,6 +6,13 @@
 #include "../settings/settings.h"
 #include <SDL2/SDL_ttf.h>
 
+typedef struct
+{
+    char name[50];
+    int score;
+} ScoreEntry;
+
+
 // Dibujar el puntaje
 void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
@@ -135,24 +142,20 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
     }
 }
 
-void SavePlayerData(char *filename, int score, char name[])
+
+
+int CompareScores(const void *a, const void *b)
 {
-    FILE *file = fopen(filename, "a"); // Abre el archivo en modo agregar
-    if (file)
-    {
-        fprintf(file, "%s,%d\n", name, score);
-        fclose(file);
-    }
-    else
-    {
-        printf("Error: No se pudo guardar el puntaje.\n");
-    }
+    ScoreEntry *entryA = (ScoreEntry *)a;
+    ScoreEntry *entryB = (ScoreEntry *)b;
+    return entryB->score - entryA->score;
 }
 
+// Función para guardar el puntaje y ordenar la tabla
 void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
 {
-
     char playerName[50];
+    int maxPlayers = 10; // Máximo número de jugadores
 
     // Obtén el puntaje actual
     int score = GetScore(gamestate);
@@ -160,6 +163,49 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     // Captura el nombre del usuario
     EnterName(renderer, playerName, gamestate);
 
-    // Guardar en un archivo
-    SavePlayerData("data/scores.txt", score, playerName);
+    // Leer los datos existentes
+    ScoreEntry entries[11]; // Máximo permitido + 1 para nuevo jugador
+    int count = 0;
+    FILE *file = fopen("data/scores.txt", "r");
+    if (file)
+    {
+        while (fscanf(file, "%49s %d", entries[count].name, &entries[count].score) == 2)
+        {
+            count++;
+            if (count >= maxPlayers) // Limitar lectura a 10 jugadores
+                break;
+        }
+        fclose(file);
+    }
+
+    // Agregar el nuevo jugador
+    if (count < 11)
+    {
+        strncpy(entries[count].name, playerName, sizeof(entries[count].name) - 1);
+        entries[count].name[sizeof(entries[count].name) - 1] = '\0'; // Asegurar terminación
+        entries[count].score = score;
+        count++;
+    }
+
+    // Ordenar por puntaje
+    qsort(entries, count, sizeof(ScoreEntry), CompareScores);
+
+    // Truncar la lista a un máximo de 10 jugadores
+    if (count > maxPlayers)
+        count = maxPlayers;
+
+    // Guardar la lista ordenada
+    file = fopen("data/scores.txt", "w");
+    if (file)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            fprintf(file, "%s %d\n", entries[i].name, entries[i].score);
+        }
+        fclose(file);
+    }
+    else
+    {
+        printf("Error: No se pudo guardar el puntaje.\n");
+    }
 }
