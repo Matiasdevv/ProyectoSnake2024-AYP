@@ -141,10 +141,11 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
     SDL_FreeSurface(difficultySurface);
     SDL_DestroyTexture(difficultyTexture);
 
-    // Leer los datos del archivo línea por línea
-    while (fscanf(file, "%s %d %s", player.name, &player.score, player.difficulty) != EOF)
-    {
+  char line[256]; // Buffer para almacenar cada línea del archivo
+while (fgets(line, sizeof(line), file) != NULL) {
 
+    if (sscanf(line, "%49[^,], %d, %49[^\n]", player.name, &player.score, player.difficulty) == 3) {
+        
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro para cada texto
 
         // **Dibujar el nombre del jugador en la primera columna**
@@ -178,18 +179,26 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
         rowCounter++;
 
         // Si llegamos al final de la fila, reiniciamos el contador y desplazamos a la siguiente fila
-        if (rowCounter >= 5) // Ajusta 5 al número máximo de jugadores por fila
-        {
+        if (rowCounter >= 5) { // Ajusta 5 al número máximo de jugadores por fila
             rowCounter = 0;           // Reiniciar el contador de filas
             yOffset += rowHeight * 5; // Aumentar el desplazamiento Y para la siguiente fila
         }
 
         // Si ya tenemos suficiente espacio en pantalla, detenemos el bucle (limitamos el número de jugadores a mostrar)
-        if (yOffset + rowHeight * (rowCounter + 1) > SCREEN_HEIGHT - 100)
-        {
+        if (yOffset + rowHeight * (rowCounter + 1) > SCREEN_HEIGHT - 100) {
             break; // Evitar dibujar fuera de la pantalla
         }
+    } else {
+        // Si no se pudieron leer correctamente los tres elementos, muestra un mensaje de error
+        printf("Error al leer los datos de la línea: %s\n", line);
     }
+}
+
+
+
+
+
+
 
     // **Dibujar la opción "Volver" (última opción de menú)**
     SDL_Surface *exitSurface = TTF_RenderText_Solid(font, "Volver", white);

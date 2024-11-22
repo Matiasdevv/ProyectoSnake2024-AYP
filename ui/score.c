@@ -64,7 +64,7 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
     SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100}; // Posición del texto ingresado
 
     // Variable para el texto del título
-    char title[50] = "Por favor, ingrese su nombre"; // Texto para la parte superior de la pantalla
+    char title[50] = "Por favor, ingrese su nombre "; // Texto para la parte superior de la pantalla
 
     // Posición del texto superior
     SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50}; // Ancho y alto iniciales
