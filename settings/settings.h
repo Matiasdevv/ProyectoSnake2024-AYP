@@ -23,7 +23,7 @@ typedef struct
     int running;
     int velX;
     int velY;
-
+    int diff;
     TTF_Font *font;
 } GameState;
 
@@ -51,6 +51,7 @@ void SetMenuOption(GameState *gameState, int option);
 void setSnakeLimits(GameState *gamestate, Segment *snake);
 void exitGame(GameState *gameState, SDL_Renderer *renderer,SDL_Window *window);
 int GetSnakeVelY(GameState *gameState);
+int GetDiffStatus (GameState *GameState);
 void SetSnakeVelY(GameState *gameState, int velY);
 int GetSnakeVelX(GameState *gameState);
 void SetSnakeVelX(GameState *gameState, int velX);

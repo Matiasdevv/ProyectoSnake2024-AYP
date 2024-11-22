@@ -21,6 +21,8 @@ void InitGameState(GameState *gameState)
     gameState->velX = 40;
     gameState->velY = 0;
     gameState->font = NULL;
+    gameState -> diff = 1;
+    
 }
 
 // Definición de las variables globales
@@ -85,6 +87,11 @@ int GetBorderWidth(GameState *gameState)
 int GetRunningStatus(GameState *gameState)
 {
     return gameState->running;
+}
+
+int GetDiffStatus(GameState *gameState)
+{
+    return gameState->diff;
 }
 
 void SetRunningStatus(GameState *gameState, int status)

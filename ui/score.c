@@ -6,11 +6,7 @@
 #include "../settings/settings.h"
 #include <SDL2/SDL_ttf.h>
 
-typedef struct
-{
-    char name[50];
-    int score;
-} ScoreEntry;
+
 
 
 // Dibujar el puntaje
@@ -146,14 +142,16 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
 
 int CompareScores(const void *a, const void *b)
 {
-    ScoreEntry *entryA = (ScoreEntry *)a;
-    ScoreEntry *entryB = (ScoreEntry *)b;
+    Player *entryA = (Player *)a;
+    Player *entryB = (Player *)b;
     return entryB->score - entryA->score;
 }
 
 // Función para guardar el puntaje y ordenar la tabla
+// Función para guardar el puntaje y la dificultad
 void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
 {
+    int diff = GetDiffStatus(gamestate); // Obtener dificultad
     char playerName[50];
     int maxPlayers = 10; // Máximo número de jugadores
 
@@ -164,12 +162,12 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     EnterName(renderer, playerName, gamestate);
 
     // Leer los datos existentes
-    ScoreEntry entries[11]; // Máximo permitido + 1 para nuevo jugador
+    Player entries[11]; // Máximo permitido + 1 para nuevo jugador
     int count = 0;
     FILE *file = fopen("data/scores.txt", "r");
     if (file)
     {
-        while (fscanf(file, "%49s %d", entries[count].name, &entries[count].score) == 2)
+        while (fscanf(file, "%49s %d %d", entries[count].name, &entries[count].score, &entries[count].difficulty) == 3)
         {
             count++;
             if (count >= maxPlayers) // Limitar lectura a 10 jugadores
@@ -177,18 +175,32 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
         }
         fclose(file);
     }
-
+      
     // Agregar el nuevo jugador
     if (count < 11)
     {
         strncpy(entries[count].name, playerName, sizeof(entries[count].name) - 1);
         entries[count].name[sizeof(entries[count].name) - 1] = '\0'; // Asegurar terminación
         entries[count].score = score;
+        switch (diff)
+        {
+        case 0:
+               entries[count].difficulty ="FACIL";
+            break;
+
+              case 1:
+               entries[count].difficulty ="NORMAL";
+            break;
+        
+        default:
+        entries[count].difficulty ="DIFICIL";
+            break;
+        }
         count++;
     }
 
     // Ordenar por puntaje
-    qsort(entries, count, sizeof(ScoreEntry), CompareScores);
+    qsort(entries, count, sizeof(Player), CompareScores);
 
     // Truncar la lista a un máximo de 10 jugadores
     if (count > maxPlayers)
@@ -200,7 +212,7 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     {
         for (int i = 0; i < count; i++)
         {
-            fprintf(file, "%s %d\n", entries[i].name, entries[i].score);
+            fprintf(file, "%s %d %d\n", entries[i].name, entries[i].score, entries[i].difficulty);
         }
         fclose(file);
     }
