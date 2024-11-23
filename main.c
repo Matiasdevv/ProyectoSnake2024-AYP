@@ -107,10 +107,7 @@ int main(int argc, char *argv[])
             Segment *food = initializeFood(&gameState);
             initializeMainGame(event, &gameState, renderer, food, snake);
         }
-        if (GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 1)
-        {
-            drawRanking(renderer, &gameState);
-        }
+       
 
         // Actualizar la pantalla
         SDL_RenderPresent(renderer);

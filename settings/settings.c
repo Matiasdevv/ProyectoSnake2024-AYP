@@ -21,8 +21,10 @@ void InitGameState(GameState *gameState)
     gameState->velX = 40;
     gameState->velY = 0;
     gameState->font = NULL;
+    gameState-> diffoption = 1;
     gameState -> diff = 1;
-    
+    gameState-> delay=200;
+    gameState->delayoption;
 }
 
 // Definición de las variables globales
@@ -70,6 +72,14 @@ int GetMenuOption(GameState *gameState)
 {
     return gameState->menuOption;
 }
+int GetDelayStatus(GameState *gameState)
+{
+    return gameState->delay;
+}
+int SetDelayStatus(GameState *gameState, int delayoption)
+{
+    gameState->delay= delayoption;
+}
 
 int GetSnakeLength(GameState *gameState)
 {
@@ -92,6 +102,11 @@ int GetRunningStatus(GameState *gameState)
 int GetDiffStatus(GameState *gameState)
 {
     return gameState->diff;
+}
+
+int SetDiffStatus (GameState *gameState, int diffoption)
+{
+    gameState-> diff = diffoption;
 }
 
 void SetRunningStatus(GameState *gameState, int status)

@@ -118,6 +118,6 @@ void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *ren
         setSnakeLimits(gameState, snake);
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(200);
+        SDL_Delay(GetDelayStatus(gameState));
     }
 }

@@ -8,7 +8,6 @@
 
 
 
-
 // Dibujar el puntaje
 void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
@@ -64,7 +63,7 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
     SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100}; // Posición del texto ingresado
 
     // Variable para el texto del título
-    char title[50] = "Por favor, ingrese su nombre "; // Texto para la parte superior de la pantalla
+    char title[50] = "Por favor, ingrese su nombre"; // Texto para la parte superior de la pantalla
 
     // Posición del texto superior
     SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50}; // Ancho y alto iniciales
@@ -139,21 +138,19 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
 }
 
 
-
 int CompareScores(const void *a, const void *b)
 {
     Player *entryA = (Player *)a;
     Player *entryB = (Player *)b;
-    return entryB->score - entryA->score;
+    return entryB->score - entryA->score; // Ordenar de mayor a menor
 }
 
 // Función para guardar el puntaje y ordenar la tabla
-// Función para guardar el puntaje y la dificultad
 void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
 {
-    int diff = GetDiffStatus(gamestate); // Obtener dificultad
     char playerName[50];
     int maxPlayers = 10; // Máximo número de jugadores
+    char difficulty[10]; // Variable para guardar la dificultad ("facil", "normal", "dificil")
 
     // Obtén el puntaje actual
     int score = GetScore(gamestate);
@@ -161,13 +158,29 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     // Captura el nombre del usuario
     EnterName(renderer, playerName, gamestate);
 
+    // Obtener dificultad
+    int difficultyLevel = GetDiffStatus(gamestate); // Obtener nivel de dificultad
+    switch (difficultyLevel)
+    {
+        case 0:
+            strcpy(difficulty, "facil");
+            break;
+        case 1:
+            strcpy(difficulty, "normal");
+            break;
+        default:
+            strcpy(difficulty, "dificil");
+            break;
+    }
+
     // Leer los datos existentes
     Player entries[11]; // Máximo permitido + 1 para nuevo jugador
     int count = 0;
     FILE *file = fopen("data/scores.txt", "r");
     if (file)
     {
-        while (fscanf(file, "%49s %d %d", entries[count].name, &entries[count].score, &entries[count].difficulty) == 3)
+        // Cambiar fscanf para leer correctamente los datos con comas
+        while (fscanf(file, "%49[^,], %d, %9s", entries[count].name, &entries[count].score, entries[count].difficulty) == 3)
         {
             count++;
             if (count >= maxPlayers) // Limitar lectura a 10 jugadores
@@ -175,27 +188,15 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
         }
         fclose(file);
     }
-      
+
     // Agregar el nuevo jugador
-    if (count < 11)
+    if (count < 11) // Si hay espacio, agregar nuevo jugador
     {
         strncpy(entries[count].name, playerName, sizeof(entries[count].name) - 1);
         entries[count].name[sizeof(entries[count].name) - 1] = '\0'; // Asegurar terminación
         entries[count].score = score;
-        switch (diff)
-        {
-        case 0:
-               entries[count].difficulty ="FACIL";
-            break;
-
-              case 1:
-               entries[count].difficulty ="NORMAL";
-            break;
-        
-        default:
-        entries[count].difficulty ="DIFICIL";
-            break;
-        }
+        strncpy(entries[count].difficulty, difficulty, sizeof(entries[count].difficulty) - 1);
+        entries[count].difficulty[sizeof(entries[count].difficulty) - 1] = '\0'; // Asegurar terminación
         count++;
     }
 
@@ -206,13 +207,14 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     if (count > maxPlayers)
         count = maxPlayers;
 
-    // Guardar la lista ordenada
+    // Guardar la lista ordenada, sobrescribiendo el archivo si es necesario
     file = fopen("data/scores.txt", "w");
     if (file)
     {
         for (int i = 0; i < count; i++)
         {
-            fprintf(file, "%s %d %d\n", entries[i].name, entries[i].score, entries[i].difficulty);
+            // Cambiar fprintf para escribir correctamente con comas
+            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
         }
         fclose(file);
     }
