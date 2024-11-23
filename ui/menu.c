@@ -226,7 +226,7 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
     // Fuente
     TTF_Font *font = GetFont(gameState);
 
-    // **Dibujar la tag "RANKING"**
+    // **Dibujar la opción "Volver" (última opción de menú)**
     SDL_Surface *rankingSurface = TTF_RenderText_Solid(font, "RANKING", red);
     SDL_Texture *rankingTexture = SDL_CreateTextureFromSurface(renderer, rankingSurface);
     SDL_Rect rankingRect = {SCREEN_WIDTH / 2 - rankingSurface->w / 2, 50, rankingSurface->w, rankingSurface->h};
@@ -318,7 +318,8 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
         }
     }
 
-    SDL_Surface *exitSurface = TTF_RenderText_Solid(font, "Presione enter para volver", white);
+    // **Dibujar la opción "Volver" (última opción de menú)**
+    SDL_Surface *exitSurface = TTF_RenderText_Solid(font, "Volver", white);
     SDL_Texture *exitTexture = SDL_CreateTextureFromSurface(renderer, exitSurface);
     SDL_Rect exitRect = {SCREEN_WIDTH / 2 - exitSurface->w / 2, SCREEN_HEIGHT - 100, exitSurface->w, exitSurface->h};
     SDL_RenderCopy(renderer, exitTexture, NULL, &exitRect);
@@ -354,7 +355,7 @@ void handleRankingInput(SDL_Event event, GameState *gameState, SDL_Renderer *ren
     }
 }
 
-void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window) // muestra n menues segun las opciones elegidas
+void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
 {
     // Mostrar el menú principal
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 1)
