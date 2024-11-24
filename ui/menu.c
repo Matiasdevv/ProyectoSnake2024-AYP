@@ -54,8 +54,7 @@ void drawMenu(SDL_Renderer *renderer, GameState *gameState)
     SDL_DestroyTexture(exitTexture);
 }
 
-
-void handleMenuInput(SDL_Event event, GameState *gameState, SDL_Renderer *renderer,SDL_Window *window)
+void handleMenuInput(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
 {
     int menuOption = GetMenuOption(gameState); // Obtener la opción del menú actual
     switch (event.key.keysym.sym)
@@ -106,7 +105,6 @@ void handleMenuInput(SDL_Event event, GameState *gameState, SDL_Renderer *render
             SetMenuOption(gameState, menuOption); // Actualizar el estado global
             SetMenuStatus(gameState, 4);
             exitGame(gameState, renderer, window);
-
         }
         break;
     }
@@ -174,21 +172,21 @@ void handleDifficultyInput(SDL_Event event, GameState *gameState, SDL_Renderer *
         {
             printf("Dificultad seleccionada: Facil\n");
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "facil"
-            SetDelayStatus (gameState,300);
+            SetDelayStatus(gameState, 300);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
         }
         else if (menuOption == 1)
         {
             printf("Dificultad seleccionada: Normal\n");
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "normal"
-            SetDelayStatus (gameState,200);
+            SetDelayStatus(gameState, 200);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
         }
         else if (menuOption == 2)
         {
             printf("Dificultad seleccionada: Dificil\n");
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "dificil"
-            SetDelayStatus (gameState,100);
+            SetDelayStatus(gameState, 100);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
         }
         break;
@@ -228,7 +226,7 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
     // Fuente
     TTF_Font *font = GetFont(gameState);
 
-    // **Dibujar la opción "Volver" (última opción de menú)**
+    // **Dibujar la tag "RANKING"**
     SDL_Surface *rankingSurface = TTF_RenderText_Solid(font, "RANKING", red);
     SDL_Texture *rankingTexture = SDL_CreateTextureFromSurface(renderer, rankingSurface);
     SDL_Rect rankingRect = {SCREEN_WIDTH / 2 - rankingSurface->w / 2, 50, rankingSurface->w, rankingSurface->h};
@@ -261,63 +259,66 @@ void drawRanking(SDL_Renderer *renderer, GameState *gameState)
     SDL_FreeSurface(difficultySurface);
     SDL_DestroyTexture(difficultyTexture);
 
-  char line[256]; // Buffer para almacenar cada línea del archivo
-while (fgets(line, sizeof(line), file) != NULL) {
+    char line[256]; // Buffer para almacenar cada línea del archivo
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
 
-    if (sscanf(line, "%49[^,], %d, %49[^\n]", player.name, &player.score, player.difficulty) == 3) {
-        
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro para cada texto
+        if (sscanf(line, "%49[^,], %d, %49[^\n]", player.name, &player.score, player.difficulty) == 3)
+        {
 
-        // **Dibujar el nombre del jugador en la primera columna**
-        SDL_Surface *nameSurface = TTF_RenderText_Solid(font, player.name, white);
-        SDL_Texture *nameTexture = SDL_CreateTextureFromSurface(renderer, nameSurface);
-        SDL_Rect nameRect = {xOffset[0], yOffset + rowHeight * rowCounter, nameSurface->w, nameSurface->h};
-        SDL_RenderCopy(renderer, nameTexture, NULL, &nameRect);
-        SDL_FreeSurface(nameSurface);
-        SDL_DestroyTexture(nameTexture);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro para cada texto
 
-        // **Dibujar la puntuación del jugador en la segunda columna**
-        char scoreText[50];
-        sprintf(scoreText, "%d", player.score); // Convertir el score a texto
+            // **Dibujar el nombre del jugador en la primera columna**
+            SDL_Surface *nameSurface = TTF_RenderText_Solid(font, player.name, white);
+            SDL_Texture *nameTexture = SDL_CreateTextureFromSurface(renderer, nameSurface);
+            SDL_Rect nameRect = {xOffset[0], yOffset + rowHeight * rowCounter, nameSurface->w, nameSurface->h};
+            SDL_RenderCopy(renderer, nameTexture, NULL, &nameRect);
+            SDL_FreeSurface(nameSurface);
+            SDL_DestroyTexture(nameTexture);
 
-        SDL_Surface *scoreSurface = TTF_RenderText_Solid(font, scoreText, white);
-        SDL_Texture *scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
-        SDL_Rect scoreRect = {xOffset[1], yOffset + rowHeight * rowCounter, scoreSurface->w, scoreSurface->h};
-        SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
-        SDL_FreeSurface(scoreSurface);
-        SDL_DestroyTexture(scoreTexture);
+            // **Dibujar la puntuación del jugador en la segunda columna**
+            char scoreText[50];
+            sprintf(scoreText, "%d", player.score); // Convertir el score a texto
 
-        // **Dibujar la dificultad del jugador en la tercera columna**
-        SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, player.difficulty, white);
-        SDL_Texture *difficultyTexture = SDL_CreateTextureFromSurface(renderer, difficultySurface);
-        SDL_Rect difficultyRect = {xOffset[2], yOffset + rowHeight * rowCounter, difficultySurface->w, difficultySurface->h};
-        SDL_RenderCopy(renderer, difficultyTexture, NULL, &difficultyRect);
-        SDL_FreeSurface(difficultySurface);
-        SDL_DestroyTexture(difficultyTexture);
+            SDL_Surface *scoreSurface = TTF_RenderText_Solid(font, scoreText, white);
+            SDL_Texture *scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+            SDL_Rect scoreRect = {xOffset[1], yOffset + rowHeight * rowCounter, scoreSurface->w, scoreSurface->h};
+            SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
+            SDL_FreeSurface(scoreSurface);
+            SDL_DestroyTexture(scoreTexture);
 
-        // Incrementar el contador de filas
-        rowCounter++;
+            // **Dibujar la dificultad del jugador en la tercera columna**
+            SDL_Surface *difficultySurface = TTF_RenderText_Solid(font, player.difficulty, white);
+            SDL_Texture *difficultyTexture = SDL_CreateTextureFromSurface(renderer, difficultySurface);
+            SDL_Rect difficultyRect = {xOffset[2], yOffset + rowHeight * rowCounter, difficultySurface->w, difficultySurface->h};
+            SDL_RenderCopy(renderer, difficultyTexture, NULL, &difficultyRect);
+            SDL_FreeSurface(difficultySurface);
+            SDL_DestroyTexture(difficultyTexture);
 
-        // Si llegamos al final de la fila, reiniciamos el contador y desplazamos a la siguiente fila
-        if (rowCounter >= 5) { // Ajusta 5 al número máximo de jugadores por fila
-            rowCounter = 0;           // Reiniciar el contador de filas
-            yOffset += rowHeight * 5; // Aumentar el desplazamiento Y para la siguiente fila
+            // Incrementar el contador de filas
+            rowCounter++;
+
+            // Si llegamos al final de la fila, reiniciamos el contador y desplazamos a la siguiente fila
+            if (rowCounter >= 5)
+            {                             // Ajusta 5 al número máximo de jugadores por fila
+                rowCounter = 0;           // Reiniciar el contador de filas
+                yOffset += rowHeight * 5; // Aumentar el desplazamiento Y para la siguiente fila
+            }
+
+            // Si ya tenemos suficiente espacio en pantalla, detenemos el bucle (limitamos el número de jugadores a mostrar)
+            if (yOffset + rowHeight * (rowCounter + 1) > SCREEN_HEIGHT - 100)
+            {
+                break; // Evitar dibujar fuera de la pantalla
+            }
         }
-
-        // Si ya tenemos suficiente espacio en pantalla, detenemos el bucle (limitamos el número de jugadores a mostrar)
-        if (yOffset + rowHeight * (rowCounter + 1) > SCREEN_HEIGHT - 100) {
-            break; // Evitar dibujar fuera de la pantalla
+        else
+        {
+            // Si no se pudieron leer correctamente los tres elementos, muestra un mensaje de error
+            printf("Error al leer los datos de la línea: %s\n", line);
         }
-    } else {
-        // Si no se pudieron leer correctamente los tres elementos, muestra un mensaje de error
-        printf("Error al leer los datos de la línea: %s\n", line);
     }
-}
 
-
-
-    // **Dibujar la opción "Volver" (última opción de menú)**
-    SDL_Surface *exitSurface = TTF_RenderText_Solid(font, "Volver", white);
+    SDL_Surface *exitSurface = TTF_RenderText_Solid(font, "Presione enter para volver", white);
     SDL_Texture *exitTexture = SDL_CreateTextureFromSurface(renderer, exitSurface);
     SDL_Rect exitRect = {SCREEN_WIDTH / 2 - exitSurface->w / 2, SCREEN_HEIGHT - 100, exitSurface->w, exitSurface->h};
     SDL_RenderCopy(renderer, exitTexture, NULL, &exitRect);
@@ -328,19 +329,18 @@ while (fgets(line, sizeof(line), file) != NULL) {
     fclose(file);
 }
 
-
 void handleRankingInput(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
 {
     switch (event.key.keysym.sym)
     {
-    case SDLK_RETURN:  // Si presionamos Enter en el botón "Volver"
+    case SDLK_RETURN: // Si presionamos Enter en el botón "Volver"
         printf("Volviendo al menú principal...\n");
 
         // Cambiar el estado del menú para volver al menú principal
         SetMenuStatus(gameState, 1); // Volver al menú principal
         break;
 
-    case SDLK_ESCAPE:  // Si presionamos Escape, también volvemos al menú principal
+    case SDLK_ESCAPE: // Si presionamos Escape, también volvemos al menú principal
         printf("Volviendo al menú principal...\n");
 
         // Cambiar el estado del menú para volver al menú principal
@@ -354,16 +354,13 @@ void handleRankingInput(SDL_Event event, GameState *gameState, SDL_Renderer *ren
     }
 }
 
-
-
-
-void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
+void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window) // muestra n menues segun las opciones elegidas
 {
     // Mostrar el menú principal
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 1)
     {
         SDL_RenderClear(renderer);
-        
+
         // Manejar los eventos
         while (SDL_PollEvent(&event))
         {
@@ -387,7 +384,7 @@ void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 3)
     {
         SDL_RenderClear(renderer);
-        
+
         // Manejar los eventos
         while (SDL_PollEvent(&event))
         {
@@ -411,7 +408,7 @@ void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 2)
     {
         SDL_RenderClear(renderer);
-        
+
         // Manejar los eventos
         while (SDL_PollEvent(&event))
         {
@@ -431,5 +428,3 @@ void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL
         SDL_RenderPresent(renderer);
     }
 }
-
-

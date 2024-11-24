@@ -22,6 +22,7 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *rend
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
+            free(snake);
             SaveScore(gamestate, renderer);
             SetMenuStatus(gamestate, 1);
             SetMenuOption(gamestate, 0);

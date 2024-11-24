@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
         {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
+
             Segment *snake = initializeSnake(&gameState);
             Segment *food = initializeFood(&gameState);
             initializeMainGame(event, &gameState, renderer, food, snake);
         }
-       
 
         // Actualizar la pantalla
         SDL_RenderPresent(renderer);
