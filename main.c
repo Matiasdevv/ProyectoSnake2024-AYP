@@ -77,7 +77,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    LoadTextures(&gameState, renderer);
     Segment *snake = malloc(GetSnakeLength(&gameState) * sizeof(Segment));
     Segment *food = malloc(sizeof(Segment));
 
@@ -105,6 +104,8 @@ int main(int argc, char *argv[])
         {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
+            
+            LoadTextures(&gameState, renderer);
 
             initializeSnake(&gameState, snake);
             initializeFood(&gameState, food);

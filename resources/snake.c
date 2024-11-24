@@ -22,11 +22,15 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *rend
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
-            free(snake);
-            SaveScore(gamestate, renderer);
-            SetMenuStatus(gamestate, 1);
-            SetMenuOption(gamestate, 0);
-            InitGameState(gamestate);
+             TTF_CloseFont(GetFont(gamestate));
+             SDL_DestroyTexture(getSnakeTextureUp(gamestate));
+             SDL_DestroyTexture(getSnakeTextureDown(gamestate));
+             SDL_DestroyTexture(getSnakeTextureLeft(gamestate));
+             SDL_DestroyTexture(getSnakeTextureRight(gamestate));
+             SDL_DestroyTexture(getSnakeBodyTextureHorizontal(gamestate));
+             SDL_DestroyTexture(getSnakeBodyTextureVertical(gamestate));
+             SaveScore(gamestate, renderer);
+            
         }
     }
 }

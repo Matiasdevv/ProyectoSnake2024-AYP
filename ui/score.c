@@ -217,6 +217,9 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
             fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
         }
         fclose(file);
+        SetMenuStatus(gamestate, 1);
+            SetMenuOption(gamestate, 0);
+            InitGameState(gamestate);
     }
     else
     {
