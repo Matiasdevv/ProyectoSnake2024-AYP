@@ -56,9 +56,8 @@ void drawFood(SDL_Renderer *renderer, Segment food)
     SDL_RenderCopy(renderer, foodTexture, NULL, &foodRect);
 }
 
-Segment *initializeFood(GameState *gamestate)
+void *initializeFood(GameState *gamestate, Segment *food)
 {
-    Segment *food;
     if (food == NULL)
     {
         // Manejo de error si la memoria no se puede asignar
@@ -87,6 +86,4 @@ Segment *initializeFood(GameState *gamestate)
 
     printf("cordenada x %d \n", food->x);
     printf("cordenada y %d \n", food->y);
-
-    return food;
 }

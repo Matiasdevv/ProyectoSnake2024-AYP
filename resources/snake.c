@@ -68,14 +68,13 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
     }
 }
 
-Segment *initializeSnake(GameState *gamsetate)
+void *initializeSnake(GameState *gamsetate, Segment *snake)
 {
     const int MAX_SNAKE_LENGTH = GetMaxSnakeLength(gamsetate);
     const int SCREEN_WIDTH = GetScreenWidth(gamsetate);
     const int SCREEN_HEIGHT = GetScreenHeight(gamsetate);
     // const int BORDER_WIDTH = GetBorderHeight(gamsetate);
     const int SEGMENT_SIZE = GetSegmentSize(gamsetate);
-    Segment *snake = malloc(MAX_SNAKE_LENGTH * sizeof(Segment));
     if (snake == NULL)
     {
         // Manejo de error si la memoria no se puede asignar
@@ -86,8 +85,6 @@ Segment *initializeSnake(GameState *gamsetate)
     snake[0].y = SCREEN_HEIGHT / 2;
     snake[0].w = SEGMENT_SIZE;
     snake[0].h = SEGMENT_SIZE;
-
-    return snake;
 }
 
 void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake)
