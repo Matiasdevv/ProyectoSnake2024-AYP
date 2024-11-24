@@ -115,8 +115,16 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(renderer);
     }
 
+    TTF_CloseFont(GetFont(&gameState));
+    SDL_DestroyTexture(getSnakeTextureUp(&gameState));
+    SDL_DestroyTexture(getSnakeTextureDown(&gameState));
+    SDL_DestroyTexture(getSnakeTextureLeft(&gameState));
+    SDL_DestroyTexture(getSnakeTextureRight(&gameState));
+    SDL_DestroyTexture(getSnakeBodyTextureHorizontal(&gameState));
+    SDL_DestroyTexture(getSnakeBodyTextureVertical(&gameState));
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
     SDL_Quit();
 
     return 0;
