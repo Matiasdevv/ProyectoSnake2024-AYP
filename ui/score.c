@@ -155,7 +155,7 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     // Obtén el puntaje actual
     int score = GetScore(gamestate);
 
-    
+    // Obtener el nombre del jugador
     EnterName(renderer, playerName, gamestate);
 
     // Obtener dificultad
@@ -174,17 +174,21 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     }
 
     // Leer los datos existentes
+    char buffer[100]; // Buffer temporal para leer líneas
     Player entries[11]; // Máximo permitido + 1 para nuevo jugador
     int count = 0;
     FILE *file = fopen("data/scores.txt", "r");
     if (file)
     {
-        // Cambiar fscanf para leer correctamente los datos con comas
-        while (fscanf(file, "%49[^,], %d, %9s", entries[count].name, &entries[count].score, entries[count].difficulty) == 3)
+        while (fgets(buffer, sizeof(buffer), file))
         {
-            count++;
-            if (count >= maxPlayers) // Limitar lectura a 10 jugadores
-                break;
+            // Ignorar líneas vacías y validar el formato correcto
+            if (strlen(buffer) > 1 && sscanf(buffer, "%49[^,], %d, %9s", entries[count].name, &entries[count].score, entries[count].difficulty) == 3)
+            {
+                count++;
+                if (count >= maxPlayers) // Limitar lectura a 10 jugadores
+                    break;
+            }
         }
         fclose(file);
     }
@@ -213,11 +217,9 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     {
         for (int i = 0; i < count; i++)
         {
-            // Cambiar fprintf para escribir correctamente con comas
             fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
         }
         fclose(file);
-           
     }
     else
     {

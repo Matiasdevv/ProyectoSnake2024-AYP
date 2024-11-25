@@ -31,8 +31,9 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *rend
              SDL_DestroyTexture(getSnakeBodyTextureVertical(gamestate));
               SetMenuStatus(gamestate, 1);
               SetMenuOption(gamestate, 0);
-              ResetGameState(gamestate);
               SaveScore(gamestate, renderer);
+              ResetGameState(gamestate);
+              
             
         }
     }
