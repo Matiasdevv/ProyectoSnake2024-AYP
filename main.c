@@ -77,8 +77,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    Segment *snake = malloc(GetSnakeLength(&gameState) * sizeof(Segment));
+    Segment *snake = malloc(GetMaxSnakeLength(&gameState) * sizeof(Segment));
     Segment *food = malloc(sizeof(Segment));
+    
 
     while (GetRunningStatus(&gameState) != 0)
     {
@@ -94,6 +95,8 @@ int main(int argc, char *argv[])
         // Limpiar pantalla
         SDL_RenderClear(renderer);
 
+        
+    
         // Verificar el estado del menú
         if (GetMenuStatus(&gameState) == 1)
         {

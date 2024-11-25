@@ -42,6 +42,7 @@ void InitGameState(GameState *gameState);
 TTF_Font *GetFont(GameState *gameState);
 void CloseFont(GameState *gameState);
 void LoadTextures(GameState *gamestate, SDL_Renderer *renderer);
+void ResetGameState(GameState *gameState);
 // Accesores y modificadores
 
 int GetScore(GameState *gameState);

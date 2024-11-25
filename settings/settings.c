@@ -27,6 +27,26 @@ void InitGameState(GameState *gameState)
     gameState->delayoption;
 }
 
+
+void ResetGameState(GameState *gameState)
+{
+    gameState->screenWidth = 1280;
+    gameState->screenHeight = 720;
+    gameState->segmentSize = 40;
+    gameState->borderWidth = 40;
+    gameState->maxSnakeLength = 300;
+
+    gameState->menuOption = 0;
+    gameState->onMenu = 1;
+    gameState->score = 0;
+    gameState->snakeLength = 2;
+    gameState->running = 1;
+    gameState->velX = 40;
+    gameState->velY = 0;
+    gameState->font = NULL;
+}
+
+
 // Definición de las variables globales
 SDL_Color textColor = {255, 255, 255}; // Color blanco
 SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft, *snakeTurnTextureUpRight, *snakeTurnTextureDownRight, *snakeTurnTextureDownLeft;
