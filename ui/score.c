@@ -18,7 +18,7 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
     TTF_Font *font = GetFont(gamestate);
     if (!font)
     {
-        printf("roto");
+        printf("error al crear puntaje");
     }
 
     SDL_Surface *textSurface = TTF_RenderText_Solid((TTF_Font *)font, scoreText, getTextColor());

@@ -21,6 +21,17 @@ void drawMenu(SDL_Renderer *renderer, GameState *gameState)
 
     // Fuente
     TTF_Font *font = GetFont(gameState);
+// Saludo
+    const char *playerName = GetPlayerName(gameState); // Obtener el nombre del jugador
+    char greeting[100]; // Buffer para el saludo
+    snprintf(greeting, sizeof(greeting), "Hola, %s! espero que disfrutes del juego", playerName); // Formar el saludo
+
+    SDL_Surface *greetingSurface = TTF_RenderText_Solid(font, greeting, white);
+    SDL_Texture *greetingTexture = SDL_CreateTextureFromSurface(renderer, greetingSurface);
+    SDL_Rect greetingRect = {SCREEN_WIDTH / 2 - 300, 50, 600, 50}; // Ajusta las dimensiones y posición según sea necesario
+    SDL_RenderCopy(renderer, greetingTexture, NULL, &greetingRect);
+    SDL_FreeSurface(greetingSurface);
+    SDL_DestroyTexture(greetingTexture);
 
     // Opción de menú "Jugar"
     SDL_Surface *playSurface = TTF_RenderText_Solid(font, "Jugar", GetMenuOption(gameState) == 0 ? red : white);
