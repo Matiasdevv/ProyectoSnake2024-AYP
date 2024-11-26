@@ -358,7 +358,6 @@ void handleRankingInput(SDL_Event event, GameState *gameState, SDL_Renderer *ren
 void showMenu(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
 {
 
-    
     // Mostrar el menú principal
     while (GetRunningStatus(gameState) == 1 && GetMenuStatus(gameState) == 1)
     {

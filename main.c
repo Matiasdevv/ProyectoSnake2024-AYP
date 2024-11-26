@@ -8,7 +8,6 @@
 #include "ui/map.h"
 #include "ui/score.h"
 #include "ui/menu.h"
-#include "ui/draw.h"
 #include "resources/snake.h"
 
 int fileExists(const char *filename)
@@ -37,9 +36,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // Declarar e inicializar el estado del juego
     GameState gameState;
-    InitGameState(&gameState);
+    Player player = (Player){name : "", difficulty : 0, score : 0};
+    // Declarar e inicializar el estado del juego
+    InitGameState(&gameState, player);
 
     // Cargar la fuente
     if (!GetFont(&gameState))
@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
 
     Segment *snake = malloc(GetMaxSnakeLength(&gameState) * sizeof(Segment));
     Segment *food = malloc(sizeof(Segment));
-    
+    // Obtener el nombre del jugador
+    EnterName(renderer, &gameState);
 
     while (GetRunningStatus(&gameState) != 0)
     {
@@ -95,8 +96,6 @@ int main(int argc, char *argv[])
         // Limpiar pantalla
         SDL_RenderClear(renderer);
 
-        
-    
         // Verificar el estado del menú
         if (GetMenuStatus(&gameState) == 1)
         {
@@ -107,7 +106,7 @@ int main(int argc, char *argv[])
         {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
-            
+
             LoadTextures(&gameState, renderer);
 
             initializeSnake(&gameState, snake);
@@ -133,4 +132,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

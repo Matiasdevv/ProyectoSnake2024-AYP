@@ -6,8 +6,6 @@
 #include "../settings/settings.h"
 #include <SDL2/SDL_ttf.h>
 
-
-
 // Dibujar el puntaje
 void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 {
@@ -49,29 +47,29 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 }
 
 // Función para capturar el nombre
-void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
+void EnterName(SDL_Renderer *renderer, GameState *gamestate)
 {
-    int SCREEN_WIDTH = GetScreenWidth(gamestate);   // Obtener anchura de la pantalla
-    int SCREEN_HEIGHT = GetScreenHeight(gamestate); // Obtener altura de la pantalla
-    int maxLen = 50;
+    int SCREEN_WIDTH = GetScreenWidth(gamestate);
+    int SCREEN_HEIGHT = GetScreenHeight(gamestate);
+    int maxLen = sizeof(gamestate->player.name) - 1;
 
     SDL_Event event;
     int done = 0;
     int index = 0;
 
-    SDL_Color textColor = {255, 255, 255, 255};                                // Color blanco
-    SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100}; // Posición del texto ingresado
+    SDL_Color textColor = {255, 255, 255, 255};
+    SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100};
 
-    // Variable para el texto del título
-    char title[50] = "Por favor, ingrese su nombre"; // Texto para la parte superior de la pantalla
+    char title[50] = "Por favor, ingrese su nombre";
+    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50};
 
-    // Posición del texto superior
-    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50}; // Ancho y alto iniciales
+    char *name = gamestate->player.name;
+    name[0] = '\0'; // Asegurar que el nombre comience vacío
 
     while (!done)
     {
         // Limpiar la pantalla
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         // Renderizar el texto superior
@@ -81,8 +79,8 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
             SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
             if (titleTexture)
             {
-                titleRect.w = titleSurface->w; // Ajustar ancho al texto
-                titleRect.h = titleSurface->h; // Ajustar alto al texto
+                titleRect.w = titleSurface->w;
+                titleRect.h = titleSurface->h;
                 SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
                 SDL_DestroyTexture(titleTexture);
             }
@@ -96,8 +94,8 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
             SDL_Texture *inputTexture = SDL_CreateTextureFromSurface(renderer, inputSurface);
             if (inputTexture)
             {
-                inputRect.w = inputSurface->w; // Ajustar ancho al texto
-                inputRect.h = inputSurface->h; // Ajustar alto al texto
+                inputRect.w = inputSurface->w;
+                inputRect.h = inputSurface->h;
                 SDL_RenderCopy(renderer, inputTexture, NULL, &inputRect);
                 SDL_DestroyTexture(inputTexture);
             }
@@ -111,23 +109,23 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
         {
             if (event.type == SDL_QUIT)
             {
-                done = 1; // Salir si se cierra la ventana
+                done = 1;
             }
             else if (event.type == SDL_KEYDOWN)
             {
                 if (event.key.keysym.sym == SDLK_RETURN)
                 {
-                    done = 1; // Salir cuando presionan Enter
+                    done = 1;
                 }
                 else if (event.key.keysym.sym == SDLK_BACKSPACE && index > 0)
                 {
-                    name[--index] = '\0'; // Eliminar último caracter
+                    name[--index] = '\0';
                 }
-                else if (index < maxLen - 1)
+                else if (index < maxLen)
                 {
                     char key = event.key.keysym.sym;
                     if (key >= 32 && key <= 126)
-                    { // Solo caracteres imprimibles
+                    {
                         name[index++] = key;
                         name[index] = '\0';
                     }
@@ -136,7 +134,6 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
         }
     }
 }
-
 
 int CompareScores(const void *a, const void *b)
 {
@@ -148,7 +145,7 @@ int CompareScores(const void *a, const void *b)
 // Función para guardar el puntaje y ordenar la tabla
 void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
 {
-    char playerName[25];
+    char *playerName = GetPlayerName(gamestate);
     int maxPlayers = 10; // Máximo número de jugadores
     char difficulty[10]; // Variable para guardar la dificultad ("facil", "normal", "dificil")
 
@@ -156,25 +153,24 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     int score = GetScore(gamestate);
 
     // Obtener el nombre del jugador
-    EnterName(renderer, playerName, gamestate);
 
     // Obtener dificultad
     int difficultyLevel = GetDiffStatus(gamestate); // Obtener nivel de dificultad
     switch (difficultyLevel)
     {
-        case 0:
-            strcpy(difficulty, "facil");
-            break;
-        case 1:
-            strcpy(difficulty, "normal");
-            break;
-        default:
-            strcpy(difficulty, "dificil");
-            break;
+    case 0:
+        strcpy(difficulty, "facil");
+        break;
+    case 1:
+        strcpy(difficulty, "normal");
+        break;
+    default:
+        strcpy(difficulty, "dificil");
+        break;
     }
 
     // Leer los datos existentes
-    char buffer[100]; // Buffer temporal para leer líneas
+    char buffer[100];   // Buffer temporal para leer líneas
     Player entries[11]; // Máximo permitido + 1 para nuevo jugador
     int count = 0;
     FILE *file = fopen("data/scores.txt", "r");
@@ -217,7 +213,7 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     {
         for (int i = 0; i < count; i++)
         {
-            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
+            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, difficulty);
         }
         fclose(file);
     }

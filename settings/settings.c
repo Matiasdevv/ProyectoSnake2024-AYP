@@ -5,8 +5,9 @@
 #include "settings.h"
 
 // Inicializa el estado del juego con valores predeterminados
-void InitGameState(GameState *gameState)
+void InitGameState(GameState *gameState, Player player)
 {
+
     gameState->screenWidth = 1280;
     gameState->screenHeight = 720;
     gameState->segmentSize = 40;
@@ -21,12 +22,12 @@ void InitGameState(GameState *gameState)
     gameState->velX = 40;
     gameState->velY = 0;
     gameState->font = NULL;
-    gameState-> diffoption = 1;
-    gameState -> diff = 1;
-    gameState-> delay=200;
+    gameState->diffoption = 1;
+    gameState->diff = 1;
+    gameState->delay = 200;
     gameState->delayoption;
+    gameState->player = player;
 }
-
 
 void ResetGameState(GameState *gameState)
 {
@@ -45,7 +46,6 @@ void ResetGameState(GameState *gameState)
     gameState->velY = 0;
     gameState->font = NULL;
 }
-
 
 // Definición de las variables globales
 SDL_Color textColor = {255, 255, 255}; // Color blanco
@@ -98,7 +98,7 @@ int GetDelayStatus(GameState *gameState)
 }
 int SetDelayStatus(GameState *gameState, int delayoption)
 {
-    gameState->delay= delayoption;
+    gameState->delay = delayoption;
 }
 
 int GetSnakeLength(GameState *gameState)
@@ -124,9 +124,9 @@ int GetDiffStatus(GameState *gameState)
     return gameState->diff;
 }
 
-int SetDiffStatus (GameState *gameState, int diffoption)
+int SetDiffStatus(GameState *gameState, int diffoption)
 {
-    gameState-> diff = diffoption;
+    gameState->diff = diffoption;
 }
 
 void SetRunningStatus(GameState *gameState, int status)
@@ -174,6 +174,24 @@ int GetScreenWidth(GameState *gameState)
 {
     return gameState->screenWidth;
 }
+char *GetPlayerName(GameState *gameState)
+{
+    return gameState->player.name;
+}
+
+void setPlayer(GameState *gameState, Player Player)
+{
+    gameState->player = Player;
+}
+
+void SetPlayerName(GameState *gameState, char *name)
+{
+    // Asegurarse de no desbordar el buffer
+    strncpy(gameState->player.name, name, sizeof(gameState->player.name) - 1);
+    // Asegurarse de que el nombre esté terminado con '\0'
+    gameState->player.name[sizeof(gameState->player.name) - 1] = '\0';
+}
+
 int GetMenuStatus(GameState *gameState)
 {
     return gameState->onMenu;
@@ -268,8 +286,8 @@ SDL_Color getTextColor()
     return textColor;
 }
 
-
-void exitGame(GameState *gameState, SDL_Renderer *renderer,SDL_Window *window){
+void exitGame(GameState *gameState, SDL_Renderer *renderer, SDL_Window *window)
+{
     // Limpiar recursos antes de salir
     CloseFont(gameState);
     SDL_DestroyTexture(getSnakeTextureUp());
@@ -327,29 +345,33 @@ void LoadTextures(GameState *gamestate, SDL_Renderer *renderer)
         SetRunningStatus(gamestate, 0);
     }
 
-     snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
-     if (!snakeTurnTextureUpLeft) {
-         printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
-         SetRunningStatus(gamestate,0);
-     }
+    snakeTurnTextureUpLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_left.bmp"));
+    if (!snakeTurnTextureUpLeft)
+    {
+        printf("Error al cargar la textura Turn_up_left: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
 
-     snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
-     if (!snakeTurnTextureUpRight) {
-         printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
-         SetRunningStatus(gamestate,0);
-     }
+    snakeTurnTextureUpRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_up_right.bmp"));
+    if (!snakeTurnTextureUpRight)
+    {
+        printf("Error al cargar la textura Turn_up_right: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
 
-     snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
-     if (!snakeTurnTextureDownRight) {
-         printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
-         SetRunningStatus(gamestate,0);
-     }
+    snakeTurnTextureDownRight = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_right.bmp"));
+    if (!snakeTurnTextureDownRight)
+    {
+        printf("Error al cargar la textura Turn_down_right: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
 
-     snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
-     if (!snakeTurnTextureDownLeft) {
-         printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
-         SetRunningStatus(gamestate,0);
-     }
+    snakeTurnTextureDownLeft = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/Turn_down_left.bmp"));
+    if (!snakeTurnTextureDownLeft)
+    {
+        printf("Error al cargar la textura Turn_down_left: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
 
     foodTexture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/food_sprite.bmp"));
     if (!foodTexture)

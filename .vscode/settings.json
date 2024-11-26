@@ -39,10 +39,7 @@
   "C_Cpp_Runner.compilerArgs": [],
   "C_Cpp_Runner.linkerArgs": [],
   "C_Cpp_Runner.includePaths": [],
-  "C_Cpp_Runner.includeSearch": [
-    "*",
-    "**/*"
-  ],
+  "C_Cpp_Runner.includeSearch": ["*", "**/*"],
   "C_Cpp_Runner.excludeSearch": [
     "**/build",
     "**/build/**",
@@ -71,6 +68,8 @@
     "stdio.h": "c",
     "settings.h": "c",
     "food.h": "c",
-    "draw.h": "c"
+    "draw.h": "c",
+    "typeinfo": "c",
+    "string.h": "c"
   }
 }
