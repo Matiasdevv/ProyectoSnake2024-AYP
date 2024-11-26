@@ -103,6 +103,7 @@ void EnterName(SDL_Renderer *renderer, GameState *gamestate)
         }
 
         SDL_RenderPresent(renderer);
+        SDL_Delay(200);
 
         // Manejar eventos
         while (SDL_PollEvent(&event))
@@ -110,6 +111,7 @@ void EnterName(SDL_Renderer *renderer, GameState *gamestate)
             if (event.type == SDL_QUIT)
             {
                 done = 1;
+                SetRunningStatus(gamestate, 0);
             }
             else if (event.type == SDL_KEYDOWN)
             {
@@ -151,8 +153,6 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
 
     // Obtén el puntaje actual
     int score = GetScore(gamestate);
-
-    // Obtener el nombre del jugador
 
     // Obtener dificultad
     int difficultyLevel = GetDiffStatus(gamestate); // Obtener nivel de dificultad
