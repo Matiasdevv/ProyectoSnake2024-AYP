@@ -84,6 +84,5 @@ void *initializeFood(GameState *gamestate, Segment *food)
 
     SetFoodPosition(randNumber, randNumber2, food);
 
-    printf("cordenada x %d \n", food->x);
-    printf("cordenada y %d \n", food->y);
+
 }

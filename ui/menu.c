@@ -81,26 +81,26 @@ void handleMenuInput(SDL_Event event, GameState *gameState, SDL_Renderer *render
         // Manejar las opciones seleccionadas
         if (menuOption == 0)
         {
-            printf("Arrancando juego principal...\n");
+            
             SetMenuOption(gameState, menuOption); // Actualizar el estado global
             SetMenuStatus(gameState, 0);
         }
         else if (menuOption == 1)
         {
-            printf("Mostrando ranking...\n");
+            
             SetMenuOption(gameState, menuOption); // Actualizar el estado global
             SetMenuStatus(gameState, 2);
         }
         else if (menuOption == 2)
         {
-            printf("Seleccionando dificultad...\n");
+            
             // Implementar la lógica para cambiar la dificultad
             SetMenuOption(gameState, menuOption); // Actualizar el estado global
             SetMenuStatus(gameState, 3);
         }
         else if (menuOption == 3)
         {
-            printf("Seleccionando dificultad...\n");
+            
             // Implementar la lógica para cambiar la dificultad
             SetMenuOption(gameState, menuOption); // Actualizar el estado global
             SetMenuStatus(gameState, 4);
@@ -170,21 +170,21 @@ void handleDifficultyInput(SDL_Event event, GameState *gameState, SDL_Renderer *
         // Manejar las opciones seleccionadas
         if (menuOption == 0)
         {
-            printf("Dificultad seleccionada: Facil\n");
+            
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "facil"
             SetDelayStatus(gameState, 300);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
         }
         else if (menuOption == 1)
         {
-            printf("Dificultad seleccionada: Normal\n");
+            
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "normal"
             SetDelayStatus(gameState, 200);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
         }
         else if (menuOption == 2)
         {
-            printf("Dificultad seleccionada: Dificil\n");
+            
             SetDiffStatus(gameState, menuOption); // Guardar dificultad "dificil"
             SetDelayStatus(gameState, 100);
             SetMenuStatus(gameState, 1); // Cambiar el estado del menú
@@ -335,14 +335,14 @@ void handleRankingInput(SDL_Event event, GameState *gameState, SDL_Renderer *ren
     switch (event.key.keysym.sym)
     {
     case SDLK_RETURN: // Si presionamos Enter en el botón "Volver"
-        printf("Volviendo al menú principal...\n");
+        
 
         // Cambiar el estado del menú para volver al menú principal
         SetMenuStatus(gameState, 1); // Volver al menú principal
         break;
 
     case SDLK_ESCAPE: // Si presionamos Escape, también volvemos al menú principal
-        printf("Volviendo al menú principal...\n");
+        
 
         // Cambiar el estado del menú para volver al menú principal
         SetMenuStatus(gameState, 1); // Volver al menú principal

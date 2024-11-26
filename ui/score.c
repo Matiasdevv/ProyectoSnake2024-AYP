@@ -213,7 +213,8 @@ void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
     {
         for (int i = 0; i < count; i++)
         {
-            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, difficulty);
+            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
+
         }
         fclose(file);
     }
