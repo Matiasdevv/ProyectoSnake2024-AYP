@@ -3,7 +3,6 @@
 #include "snake.h"
 #include <SDL2/SDL.h>
 
-
 void SetFoodPosition(int x, int y, Segment *food)
 {
     food->x = x;
@@ -26,8 +25,8 @@ void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
             // Generar coordenadas aleatorias dentro de la cuadrícula
             randomX = (rand() % 31) * GetSegmentSize(gamestate);
             randomY = (rand() % 17) * GetSegmentSize(gamestate);
-            
-              if (randomX == 0 || randomY == 0)
+
+            if (randomX == 0 || randomY == 0)
             {
                 isPositionValid = 0; // Marcar como inválido
                 continue;
@@ -50,7 +49,6 @@ void snakeFoodCollition(GameState *gamestate, Segment *snake, Segment *food)
     }
 }
 
-
 void drawFood(SDL_Renderer *renderer, Segment food)
 {
     SDL_Rect foodRect = {food.x, food.y, food.w, food.h};
@@ -58,9 +56,8 @@ void drawFood(SDL_Renderer *renderer, Segment food)
     SDL_RenderCopy(renderer, foodTexture, NULL, &foodRect);
 }
 
-Segment *initializeFood(GameState *gamestate)
+void *initializeFood(GameState *gamestate, Segment *food)
 {
-    Segment *food = malloc(sizeof(Segment));
     if (food == NULL)
     {
         // Manejo de error si la memoria no se puede asignar
@@ -73,24 +70,19 @@ Segment *initializeFood(GameState *gamestate)
     food->w = GetSegmentSize(gamestate);
     food->h = GetSegmentSize(gamestate);
 
-
     while (randNumber == 0)
     {
         randNumber = (rand() % 31) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
     }
 
-
     // Verificar que el número no sea 0 para random_number2
 
     while (randNumber2 == 0)
     {
-       randNumber2 = (rand() % 17) * GetSegmentSize(gamestate) ; // seguir generando números hasta que sea distinto de 0
+        randNumber2 = (rand() % 17) * GetSegmentSize(gamestate); // seguir generando números hasta que sea distinto de 0
     }
 
     SetFoodPosition(randNumber, randNumber2, food);
 
-    printf("cordenada x %d \n", food->x);
-    printf("cordenada y %d \n", food->y);
 
-    return food;
 }

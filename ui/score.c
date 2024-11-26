@@ -18,7 +18,7 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
     TTF_Font *font = GetFont(gamestate);
     if (!font)
     {
-        printf("roto");
+        printf("error al crear puntaje");
     }
 
     SDL_Surface *textSurface = TTF_RenderText_Solid((TTF_Font *)font, scoreText, getTextColor());
@@ -47,29 +47,29 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
 }
 
 // Función para capturar el nombre
-void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
+void EnterName(SDL_Renderer *renderer, GameState *gamestate)
 {
-    int SCREEN_WIDTH = GetScreenWidth(gamestate);   // Obtener anchura de la pantalla
-    int SCREEN_HEIGHT = GetScreenHeight(gamestate); // Obtener altura de la pantalla
-    int maxLen = 50;
+    int SCREEN_WIDTH = GetScreenWidth(gamestate);
+    int SCREEN_HEIGHT = GetScreenHeight(gamestate);
+    int maxLen = sizeof(gamestate->player.name) - 1;
 
     SDL_Event event;
     int done = 0;
     int index = 0;
 
-    SDL_Color textColor = {255, 255, 255, 255};                                // Color blanco
-    SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100}; // Posición del texto ingresado
+    SDL_Color textColor = {255, 255, 255, 255};
+    SDL_Rect inputRect = {SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 200, 100};
 
-    // Variable para el texto del título
-    char title[50] = "Por favor, ingrese su nombre "; // Texto para la parte superior de la pantalla
+    char title[50] = "Por favor, ingrese su nombre";
+    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50};
 
-    // Posición del texto superior
-    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 50, 400, 50}; // Ancho y alto iniciales
+    char *name = gamestate->player.name;
+    name[0] = '\0'; // Asegurar que el nombre comience vacío
 
     while (!done)
     {
         // Limpiar la pantalla
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fondo negro
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         // Renderizar el texto superior
@@ -79,8 +79,8 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
             SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
             if (titleTexture)
             {
-                titleRect.w = titleSurface->w; // Ajustar ancho al texto
-                titleRect.h = titleSurface->h; // Ajustar alto al texto
+                titleRect.w = titleSurface->w;
+                titleRect.h = titleSurface->h;
                 SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
                 SDL_DestroyTexture(titleTexture);
             }
@@ -94,8 +94,8 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
             SDL_Texture *inputTexture = SDL_CreateTextureFromSurface(renderer, inputSurface);
             if (inputTexture)
             {
-                inputRect.w = inputSurface->w; // Ajustar ancho al texto
-                inputRect.h = inputSurface->h; // Ajustar alto al texto
+                inputRect.w = inputSurface->w;
+                inputRect.h = inputSurface->h;
                 SDL_RenderCopy(renderer, inputTexture, NULL, &inputRect);
                 SDL_DestroyTexture(inputTexture);
             }
@@ -103,29 +103,31 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
         }
 
         SDL_RenderPresent(renderer);
+        SDL_Delay(200);
 
         // Manejar eventos
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                done = 1; // Salir si se cierra la ventana
+                done = 1;
+                SetRunningStatus(gamestate, 0);
             }
             else if (event.type == SDL_KEYDOWN)
             {
                 if (event.key.keysym.sym == SDLK_RETURN)
                 {
-                    done = 1; // Salir cuando presionan Enter
+                    done = 1;
                 }
                 else if (event.key.keysym.sym == SDLK_BACKSPACE && index > 0)
                 {
-                    name[--index] = '\0'; // Eliminar último caracter
+                    name[--index] = '\0';
                 }
-                else if (index < maxLen - 1)
+                else if (index < maxLen)
                 {
                     char key = event.key.keysym.sym;
                     if (key >= 32 && key <= 126)
-                    { // Solo caracteres imprimibles
+                    {
                         name[index++] = key;
                         name[index] = '\0';
                     }
@@ -135,31 +137,89 @@ void EnterName(SDL_Renderer *renderer, char *name, GameState *gamestate)
     }
 }
 
-void SavePlayerData(char *filename, int score, char name[])
+int CompareScores(const void *a, const void *b)
 {
-    FILE *file = fopen(filename, "a"); // Abre el archivo en modo agregar
+    Player *entryA = (Player *)a;
+    Player *entryB = (Player *)b;
+    return entryB->score - entryA->score; // Ordenar de mayor a menor
+}
+
+// Función para guardar el puntaje y ordenar la tabla
+void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
+{
+    char *playerName = GetPlayerName(gamestate);
+    int maxPlayers = 10; // Máximo número de jugadores
+    char difficulty[10]; // Variable para guardar la dificultad ("facil", "normal", "dificil")
+
+    // Obtén el puntaje actual
+    int score = GetScore(gamestate);
+
+    // Obtener dificultad
+    int difficultyLevel = GetDiffStatus(gamestate); // Obtener nivel de dificultad
+    switch (difficultyLevel)
+    {
+    case 0:
+        strcpy(difficulty, "facil");
+        break;
+    case 1:
+        strcpy(difficulty, "normal");
+        break;
+    default:
+        strcpy(difficulty, "dificil");
+        break;
+    }
+
+    // Leer los datos existentes
+    char buffer[100];   // Buffer temporal para leer líneas
+    Player entries[11]; // Máximo permitido + 1 para nuevo jugador
+    int count = 0;
+    FILE *file = fopen("data/scores.txt", "r");
     if (file)
     {
-        fprintf(file, "%s, %d, NORMAL\n", name, score);
+        while (fgets(buffer, sizeof(buffer), file))
+        {
+            // Ignorar líneas vacías y validar el formato correcto
+            if (strlen(buffer) > 1 && sscanf(buffer, "%49[^,], %d, %9s", entries[count].name, &entries[count].score, entries[count].difficulty) == 3)
+            {
+                count++;
+                if (count >= maxPlayers) // Limitar lectura a 10 jugadores
+                    break;
+            }
+        }
+        fclose(file);
+    }
+
+    // Agregar el nuevo jugador
+    if (count < 11) // Si hay espacio, agregar nuevo jugador
+    {
+        strncpy(entries[count].name, playerName, sizeof(entries[count].name) - 1);
+        entries[count].name[sizeof(entries[count].name) - 1] = '\0'; // Asegurar terminación
+        entries[count].score = score;
+        strncpy(entries[count].difficulty, difficulty, sizeof(entries[count].difficulty) - 1);
+        entries[count].difficulty[sizeof(entries[count].difficulty) - 1] = '\0'; // Asegurar terminación
+        count++;
+    }
+
+    // Ordenar por puntaje
+    qsort(entries, count, sizeof(Player), CompareScores);
+
+    // Truncar la lista a un máximo de 10 jugadores
+    if (count > maxPlayers)
+        count = maxPlayers;
+
+    // Guardar la lista ordenada, sobrescribiendo el archivo si es necesario
+    file = fopen("data/scores.txt", "w");
+    if (file)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            fprintf(file, "%s, %d, %s\n", entries[i].name, entries[i].score, entries[i].difficulty);
+
+        }
         fclose(file);
     }
     else
     {
         printf("Error: No se pudo guardar el puntaje.\n");
     }
-}
-
-void SaveScore(GameState *gamestate, SDL_Renderer *renderer)
-{
-
-    char playerName[50];
-
-    // Obtén el puntaje actual
-    int score = GetScore(gamestate);
-
-    // Captura el nombre del usuario
-    EnterName(renderer, playerName, gamestate);
-
-    // Guardar en un archivo
-    SavePlayerData("data/scores.txt", score, playerName);
 }

@@ -7,7 +7,80 @@
 #include "food.h"
 #include "../ui/map.h"
 #include "../ui/score.h"
-#include "../ui/draw.h"
+
+void drawSnake(SDL_Renderer *renderer, Segment *snake, GameState *gamestate)
+{
+    int snakeLength = GetSnakeLength(gamestate);
+
+    // Mover la serpiente (actualizar posiciones)
+    for (int i = snakeLength - 1; i > 0; i--)
+    {
+        snake[i] = snake[i - 1]; // Mover cada segmento hacia el anterior
+    }
+    snake[0].x += GetSnakeVelX(gamestate); // Actualizar la posición de la cabeza (x)
+    snake[0].y += GetSnakeVelY(gamestate); // Actualizar la posición de la cabeza (y)
+
+    // Renderizar la serpiente (dibujar segmentos)
+    for (int i = 0; i < snakeLength; i++)
+    {
+        SDL_Rect rect = {snake[i].x, snake[i].y, snake[i].w, snake[i].h};
+
+        if (i == 0)
+        { // Renderizar la cabeza
+            if (GetSnakeVelY(gamestate) < 0)
+            {
+                SDL_RenderCopy(renderer, getSnakeTextureUp(), NULL, &rect);
+            }
+            else if (GetSnakeVelY(gamestate) > 0)
+            {
+                SDL_RenderCopy(renderer, getSnakeTextureDown(), NULL, &rect);
+            }
+            else if (GetSnakeVelX(gamestate) < 0)
+            {
+                SDL_RenderCopy(renderer, getSnakeTextureLeft(), NULL, &rect);
+            }
+            else if (GetSnakeVelX(gamestate) > 0)
+            {
+                SDL_RenderCopy(renderer, getSnakeTextureRight(), NULL, &rect);
+            }
+        }
+        else
+        {
+            int prevX = snake[i - 1].x, prevY = snake[i - 1].y;
+            int nextX = (i < snakeLength - 1) ? snake[i + 1].x : snake[i].x;
+            int nextY = (i < snakeLength - 1) ? snake[i + 1].y : snake[i].y;
+
+            // Determinar el tipo de giro
+            if (prevY < snake[i].y && nextX > snake[i].x || nextY < snake[i].y && prevX > snake[i].x)
+            {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureDownRight(), NULL, &rect);
+            }
+            else if (prevY < snake[i].y && nextX < snake[i].x || nextY < snake[i].y && prevX < snake[i].x)
+            {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureDownLeft(), NULL, &rect);
+            }
+            else if (prevY > snake[i].y && nextX > snake[i].x || nextY > snake[i].y && prevX > snake[i].x)
+            {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureUpRight(), NULL, &rect);
+            }
+            else if (prevY > snake[i].y && nextX < snake[i].x || nextY > snake[i].y && prevX < snake[i].x)
+            {
+                SDL_RenderCopy(renderer, getSnakeTurnTextureUpLeft(), NULL, &rect);
+            }
+            else
+            {
+                if (snake[i].x == snake[i - 1].x)
+                {
+                    SDL_RenderCopy(renderer, snakeBodyTextureVertical, NULL, &rect);
+                }
+                else
+                {
+                    SDL_RenderCopy(renderer, snakeBodyTextureHorizontal, NULL, &rect);
+                }
+            }
+        }
+    }
+}
 
 // Función para verificar colisión del cuerpo de la serpiente
 void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *renderer)
@@ -22,10 +95,17 @@ void snakeBodyCollition(GameState *gamestate, Segment *snake, SDL_Renderer *rend
 
         if (SDL_HasIntersection(&snakeHead, &snakeBodySegment))
         {
-            SaveScore(gamestate, renderer);
+            TTF_CloseFont(GetFont(gamestate));
+            SDL_DestroyTexture(getSnakeTextureUp(gamestate));
+            SDL_DestroyTexture(getSnakeTextureDown(gamestate));
+            SDL_DestroyTexture(getSnakeTextureLeft(gamestate));
+            SDL_DestroyTexture(getSnakeTextureRight(gamestate));
+            SDL_DestroyTexture(getSnakeBodyTextureHorizontal(gamestate));
+            SDL_DestroyTexture(getSnakeBodyTextureVertical(gamestate));
             SetMenuStatus(gamestate, 1);
             SetMenuOption(gamestate, 0);
-            InitGameState(gamestate);
+            SaveScore(gamestate, renderer);
+            ResetGameState(gamestate);
         }
     }
 }
@@ -67,14 +147,13 @@ void snakeMovement(SDL_Event event, GameState *gamestate)
     }
 }
 
-Segment *initializeSnake(GameState *gamsetate)
+void *initializeSnake(GameState *gamsetate, Segment *snake)
 {
     const int MAX_SNAKE_LENGTH = GetMaxSnakeLength(gamsetate);
     const int SCREEN_WIDTH = GetScreenWidth(gamsetate);
     const int SCREEN_HEIGHT = GetScreenHeight(gamsetate);
     // const int BORDER_WIDTH = GetBorderHeight(gamsetate);
     const int SEGMENT_SIZE = GetSegmentSize(gamsetate);
-    Segment *snake = malloc(MAX_SNAKE_LENGTH * sizeof(Segment));
     if (snake == NULL)
     {
         // Manejo de error si la memoria no se puede asignar
@@ -85,8 +164,6 @@ Segment *initializeSnake(GameState *gamsetate)
     snake[0].y = SCREEN_HEIGHT / 2;
     snake[0].w = SEGMENT_SIZE;
     snake[0].h = SEGMENT_SIZE;
-
-    return snake;
 }
 
 void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *renderer, Segment *food, Segment *snake)
@@ -118,6 +195,6 @@ void initializeMainGame(SDL_Event event, GameState *gameState, SDL_Renderer *ren
         setSnakeLimits(gameState, snake);
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(200);
+        SDL_Delay(GetDelayStatus(gameState));
     }
 }

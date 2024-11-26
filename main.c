@@ -8,7 +8,6 @@
 #include "ui/map.h"
 #include "ui/score.h"
 #include "ui/menu.h"
-#include "ui/draw.h"
 #include "resources/snake.h"
 
 int fileExists(const char *filename)
@@ -37,9 +36,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // Declarar e inicializar el estado del juego
     GameState gameState;
-    InitGameState(&gameState);
+    Player player = (Player){name : "", difficulty : 0, score : 0};
+    // Declarar e inicializar el estado del juego
+    InitGameState(&gameState, player);
 
     // Cargar la fuente
     if (!GetFont(&gameState))
@@ -77,7 +77,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    LoadTextures(&gameState, renderer);
+    Segment *snake = malloc(GetMaxSnakeLength(&gameState) * sizeof(Segment));
+    Segment *food = malloc(sizeof(Segment));
+    // Obtener el nombre del jugador
+    EnterName(renderer, &gameState);
 
     while (GetRunningStatus(&gameState) != 0)
     {
@@ -103,20 +106,29 @@ int main(int argc, char *argv[])
         {
             // Mostrar el juego principal
             // Aquí empieza el juego después de que se sale del menú
-            Segment *snake = initializeSnake(&gameState);
-            Segment *food = initializeFood(&gameState);
+
+            LoadTextures(&gameState, renderer);
+
+            initializeSnake(&gameState, snake);
+            initializeFood(&gameState, food);
             initializeMainGame(event, &gameState, renderer, food, snake);
-        }
-        if (GetMenuStatus(&gameState) == 0 && GetMenuOption(&gameState) == 1)
-        {
-            drawRanking(renderer, &gameState);
         }
 
         // Actualizar la pantalla
         SDL_RenderPresent(renderer);
     }
 
+    TTF_CloseFont(GetFont(&gameState));
+    SDL_DestroyTexture(getSnakeTextureUp(&gameState));
+    SDL_DestroyTexture(getSnakeTextureDown(&gameState));
+    SDL_DestroyTexture(getSnakeTextureLeft(&gameState));
+    SDL_DestroyTexture(getSnakeTextureRight(&gameState));
+    SDL_DestroyTexture(getSnakeBodyTextureHorizontal(&gameState));
+    SDL_DestroyTexture(getSnakeBodyTextureVertical(&gameState));
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_Quit();
+    SDL_Quit();
+
     return 0;
 }
-
-//

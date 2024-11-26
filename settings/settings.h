@@ -23,8 +23,12 @@ typedef struct
     int running;
     int velX;
     int velY;
-
+    int diffoption;
+    int diff;
+    int delay;
+    int delayoption;
     TTF_Font *font;
+    Player player;
 } GameState;
 
 extern SDL_Color textColor; // Color blanco
@@ -35,11 +39,15 @@ extern SDL_Texture *foodTexture;
 // Prototipos de funciones para manipular el estado del juego
 
 // Inicialización y carga de recursos
-void InitGameState(GameState *gameState);
+void InitGameState(GameState *gameState, Player Player);
 TTF_Font *GetFont(GameState *gameState);
 void CloseFont(GameState *gameState);
 void LoadTextures(GameState *gamestate, SDL_Renderer *renderer);
+void ResetGameState(GameState *gameState);
+void setPlayer(GameState *gameState, Player Player);
 // Accesores y modificadores
+char *GetPlayerName(GameState *gameState);
+void SetPlayerName(GameState *gameState, char *name);
 int GetScore(GameState *gameState);
 void UpdateScore(GameState *gameState);
 int GetMenuOption(GameState *gameState);
@@ -49,11 +57,15 @@ int GetRunningStatus(GameState *gameState);
 void SetRunningStatus(GameState *gameState, int status);
 void SetMenuOption(GameState *gameState, int option);
 void setSnakeLimits(GameState *gamestate, Segment *snake);
-void exitGame(GameState *gameState, SDL_Renderer *renderer,SDL_Window *window);
+void exitGame(GameState *gameState, SDL_Renderer *renderer, SDL_Window *window);
 int GetSnakeVelY(GameState *gameState);
 void SetSnakeVelY(GameState *gameState, int velY);
 int GetSnakeVelX(GameState *gameState);
 void SetSnakeVelX(GameState *gameState, int velX);
+int GetDiffStatus(GameState *gameState);
+int SetDiffStatus(GameState *gameState, int menuoption);
+int GetDelayStatus(GameState *gameState);
+int SetDelayStatus(GameState *gameState, int delayoption);
 
 int GetBorderWidth(GameState *gameState);
 

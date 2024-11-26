@@ -9,7 +9,7 @@ typedef struct
 
 typedef struct
 {
-    char name[50];
+    char name[25];
     int score;
     char difficulty[10];
 } Player;
