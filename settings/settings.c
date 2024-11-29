@@ -50,6 +50,7 @@ void ResetGameState(GameState *gameState)
 SDL_Color textColor = {255, 255, 255}; // Color blanco
 SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft, *snakeTurnTextureUpRight, *snakeTurnTextureDownRight, *snakeTurnTextureDownLeft;
 SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
+SDL_Texture *Edge_up, *Edge_down, *Edge_turn_left_down, *Edge_turn_left_up, *Edge_turn_right_top,*Edge_turn_top_right;
 SDL_Event event;
 SDL_Texture *foodTexture;
 
@@ -274,6 +275,37 @@ SDL_Texture *getSnakeBodyTextureVertical()
     return snakeBodyTextureVertical;
 }
 
+
+SDL_Texture *getEdge_up()
+{
+    return Edge_up;
+}
+
+SDL_Texture *getEdge_down()
+{
+    return Edge_down;
+}
+
+SDL_Texture *getEdge_turn_left_donw()
+{
+    return Edge_turn_left_down;
+}
+
+SDL_Texture *getEdge_turn_left_up()
+{
+    return Edge_turn_left_up;
+}
+
+SDL_Texture *getEdge_turn_right_top()
+{
+    return Edge_turn_right_top;
+}
+
+SDL_Texture *getEdge_turn_top_right()
+{
+    return Edge_turn_top_right;
+}
+
 SDL_Texture *getFoodTexture()
 {
     return foodTexture;
@@ -378,4 +410,49 @@ void LoadTextures(GameState *gamestate, SDL_Renderer *renderer)
         printf("Error al cargar la textura de la comida: %s\n", SDL_GetError());
         SetRunningStatus(gamestate, 0);
     }
+
+
+    Edge_up = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_up.bmp"));
+    if (!Edge_up)
+    {
+        printf("Error al cargar la textura edge_up: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+    Edge_down = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_down.bmp"));
+    if (!Edge_down)
+    {
+        printf("Error al cargar la textura edge_down: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+    Edge_turn_left_down = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_turn_left_down.bmp"));
+    if (!Edge_turn_left_down)
+    {
+        printf("Error al cargar la textura edge_turn_left_down: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+    Edge_turn_left_up = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_turn_left_up.bmp"));
+    if (!Edge_turn_left_up)
+    {
+        printf("Error al cargar la textura edge_turn_left_up: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+    Edge_turn_right_top = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_turn_right_top.bmp"));
+    if (!Edge_turn_right_top)
+    {
+        printf("Error al cargar la textura edge_turn_right_top: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+    Edge_turn_top_right = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("sprites/edge_turn_top_right.bmp"));
+    if (!Edge_turn_top_right)
+    {
+        printf("Error al cargar la textura edge_turn_top_right: %s\n", SDL_GetError());
+        SetRunningStatus(gamestate, 0);
+    }
+
+
 }

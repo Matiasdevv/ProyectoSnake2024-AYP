@@ -34,6 +34,7 @@ typedef struct
 extern SDL_Color textColor; // Color blanco
 extern SDL_Texture *snakeTextureUp, *snakeTextureDown, *snakeTextureLeft, *snakeTextureRight, *snakeTurnTextureUpLeft, *snakeTurnTextureUpRight, *snakeTurnTextureDownRight, *snakeTurnTextureDownLeft;
 extern SDL_Texture *snakeBodyTextureHorizontal, *snakeBodyTextureVertical;
+extern SDL_Texture *Edge_up, *Edge_down, *Edge_turn_left_down, *Edge_turn_left_up, *Edge_turn_right_top,*Edge_turn_top_right;
 extern SDL_Event event;
 extern SDL_Texture *foodTexture;
 // Prototipos de funciones para manipular el estado del juego
@@ -86,5 +87,11 @@ SDL_Texture *getSnakeTurnTextureDownLeft();
 SDL_Texture *getSnakeBodyTextureHorizontal();
 SDL_Texture *getSnakeBodyTextureVertical();
 SDL_Texture *getFoodTexture();
+SDL_Texture *getEdge_up();
+SDL_Texture *getEdge_down();
+SDL_Texture *getEdge_turn_left_donw();
+SDL_Texture *getEdge_turn_left_up();
+SDL_Texture *getEdge_turn_right_top();
+SDL_Texture *getEdge_turn_top_right();
 SDL_Color getTextColor();
 #endif // GAME_H

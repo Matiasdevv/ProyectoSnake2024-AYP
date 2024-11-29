@@ -38,7 +38,7 @@ void drawScore(SDL_Renderer *renderer, GameState *gamestate)
     }
 
     // Posicionar el puntaje en pantalla
-    SDL_Rect textRect = {GetBorderWidth(gamestate), GetBorderWidth(gamestate) - textSurface->h + 6, textSurface->w, textSurface->h};
+    SDL_Rect textRect = {GetBorderWidth(gamestate), GetBorderWidth(gamestate) - textSurface->h, textSurface->w, textSurface->h};
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect); // Renderiza el texto
 
     // Limpiar memoria de superficie y textura
@@ -125,17 +125,67 @@ void EnterName(SDL_Renderer *renderer, GameState *gamestate)
                 }
                 else if (index < maxLen)
                 {
-                    char key = event.key.keysym.sym;
-                    if (key >= 32 && key <= 126)
+                    SDL_Keycode key = event.key.keysym.sym;
+                    SDL_Keymod mod = SDL_GetModState();
+
+                    // Excluir la coma (,) de las teclas válidas
+                    if (key == SDLK_COMMA)
                     {
-                        name[index++] = key;
-                        name[index] = '\0';
+                        continue; // Ignorar la coma
                     }
+
+                    // Solo procesar teclas alfabéticas y numéricas
+                    if (key >= SDLK_a && key <= SDLK_z)
+                    {
+                        // Si Shift o Caps Lock están activados, convertir a mayúscula
+                        if ((mod & KMOD_SHIFT) || (mod & KMOD_CAPS))
+                        {
+                            name[index++] = key - ('a' - 'A');
+                        }
+                        else
+                        {
+                            name[index++] = key;
+                        }
+                    }
+                    else if (key >= SDLK_0 && key <= SDLK_9)
+                    {
+                        // Números no cambian con Shift/Caps Lock
+                        name[index++] = key;
+                    }
+                    else if (key >= SDLK_SPACE && key <= SDLK_SLASH)
+                    {
+                        // Procesar caracteres especiales
+                        if (mod & KMOD_SHIFT)
+                        {
+                            switch (key)
+                            {
+                            case SDLK_1: name[index++] = '!'; break;
+                            case SDLK_2: name[index++] = '@'; break;
+                            case SDLK_3: name[index++] = '#'; break;
+                            case SDLK_4: name[index++] = '$'; break;
+                            case SDLK_5: name[index++] = '%'; break;
+                            case SDLK_6: name[index++] = '^'; break;
+                            case SDLK_7: name[index++] = '&'; break;
+                            case SDLK_8: name[index++] = '*'; break;
+                            case SDLK_9: name[index++] = '('; break;
+                            case SDLK_0: name[index++] = ')'; break;
+                            case SDLK_MINUS: name[index++] = '_'; break;
+                            case SDLK_EQUALS: name[index++] = '+'; break;
+                            default: break; // Otros caracteres
+                            }
+                        }
+                        else
+                        {
+                            name[index++] = key;
+                        }
+                    }
+                    name[index] = '\0'; // Asegurarse de terminar el string
                 }
             }
         }
     }
 }
+
 
 int CompareScores(const void *a, const void *b)
 {

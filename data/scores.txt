@@ -1,0 +1,10 @@
+TECNOWW, 40, normal
+TECNOWW, 31, dificil
+malloide, 18, dificil
+a, 14, normal
+anashei, 14, normal
+anashei, 14, dificil
+tobias, 12, dificil
+TECNOWW, 12, dificil
+malloide, 11, normal
+anashei, 10, dificil
